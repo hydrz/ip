@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      查看我的IP地址 | 查询本机IP地址及归属地 | 查看DNS出口IP | 查看递归DNS信息 | 测试CDN命中节点 | IP Address Lookup | What is my IP
+      address
+    </title>
+    <meta
+      name="description"
+      content="查看我的IP地址，查询本机IP地址及归属地，查看DNS出口IP，查看递归DNS信息，测试CDN命中节点。免费在线IP查询工具，支持IPv4/IPv6地理位置查询、网络连通性测试、CDN节点检测和DNS出口查询。IP Address Lookup, What is my IP address, What is my DNS, DNSLeaks, GeoIP API。"
+    />
+    <meta
+      name="keywords"
+      content="查看我的IP地址,查询本机IP地址及归属地,查看DNS出口IP,查看递归DNS信息,测试CDN命中节点,IP查询,IP地址查询,IPv4,IPv6,地理位置查询,网络测试,CDN检测,DNS查询,在线工具,IP Address Lookup,What is my IP address,What is my DNS,DNSLeaks,GeoIP API"
+    />
+    <meta name="author" content="hydrz" />
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href="https://ip.hydrz.cn/" />
+
+    <script src="/@tailwindcss-browser@4"></script>
+  </head>
+  <body class="bg-white text-gray-900">
+    <div class="max-w-90/100 mx-auto px-6 py-8">
+      <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start main-grid">
+        <!-- Left: IP table -->
+        <section>
+          <h2 class="sr-only">IP地址信息查询</h2>
+          <div>
+            <h1 class="text-lg font-semibold mb-4 text-center">IP 地址查询</h1>
+            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 overflow-x-auto">
+              <table id="ip-table" class="w-full text-sm table-fixed">
+                <caption class="sr-only">
+                  IP 地址查询结果表格
+                </caption>
+                <colgroup>
+                  <col style="width: 5%" />
+                  <col style="width: 15%" />
+                  <col style="width: 30%" />
+                  <col style="width: 45%" />
+                </colgroup>
+                <tbody class="divide-y divide-gray-100">
+                  <!-- itdog.cn -->
+                  <tr>
+                    <td class="py-3 font-semibold text-sm">国内</td>
+                    <td class="py-3 font-medium text-gray-700 text-xs">ipv4.itdog.cn</td>
+                    <td id="ip-itdog-ipv4-ip" class="py-3 text-gray-700 text-sm">加载中...</td>
+                    <td id="ip-itdog-ipv4-addr" class="py-3 text-gray-500 text-sm">-</td>
+                  </tr>
+
+                  <!-- IPIP.net -->
+                  <tr>
+                    <td class="py-3 font-semibold text-sm">国内</td>
+                    <td class="py-3 font-medium text-gray-700 text-xs">ipv6.itdog.cn</td>
+                    <td id="ip-itdog-ipv6-ip" class="py-3 text-gray-700 text-sm"><span class="text-gray-500">加载中...</span></td>
+                    <td id="ip-itdog-ipv6-addr" class="py-3 text-gray-500 text-sm">-</td>
+                  </tr>
+                  <!-- 腾讯新闻 -->
+                  <tr>
+                    <td class="py-3 font-semibold text-sm">国内</td>
+                    <td class="py-3 font-medium text-gray-700 text-xs">腾讯新闻</td>
+                    <td id="ip-tencent-ip" class="py-3 text-gray-700 text-sm">加载中...</td>
+                    <td id="ip-tencent-addr" class="py-3 text-gray-500 text-sm">-</td>
+                  </tr>
+                  <!-- speedtest.cn -->
+                  <tr>
+                    <td class="py-3 font-semibold text-sm">国内</td>
+                    <td class="py-3 font-medium text-gray-700 text-xs">speedtest.cn</td>
+                    <td id="ip-speedtest-ip" class="py-3 text-gray-700 text-sm">加载中...</td>
+                    <td id="ip-speedtest-addr" class="py-3 text-gray-500 text-sm">-</td>
+                  </tr>
+                  <!-- Cloudflare -->
+                  <tr>
+                    <td class="py-3 font-semibold text-sm">国外</td>
+                    <td class="py-3 font-medium text-gray-700 text-xs">Cloudflare</td>
+                    <td id="ip-cloudflare-ip" class="py-3 text-gray-700 text-sm">加载中...</td>
+                    <td id="ip-cloudflare-addr" class="py-3 text-gray-500 text-sm">-</td>
+                  </tr>
+                  <!-- IP.SB -->
+                  <tr>
+                    <td class="py-3 font-semibold text-sm">国外</td>
+                    <td class="py-3 font-medium text-gray-700 text-xs">IP.SB</td>
+                    <td id="ip-ipsb-ip" class="py-3 text-gray-700 text-sm">加载中...</td>
+                    <td id="ip-ipsb-addr" class="py-3 text-gray-500 text-sm">-</td>
+                  </tr>
+                  <!-- ip-api.com -->
+                  <tr>
+                    <td class="py-3 font-semibold text-sm">国外</td>
+                    <td class="py-3 font-medium text-gray-700 text-xs">ip-api.com</td>
+                    <td id="ip-ipapi-ip" class="py-3 text-gray-700 text-sm">加载中...</td>
+                    <td id="ip-ipapi-addr" class="py-3 text-gray-500 text-sm">-</td>
+                  </tr>
+                  <!-- IPInfo.io -->
+                  <tr>
+                    <td class="py-3 font-semibold text-sm">国外</td>
+                    <td class="py-3 font-medium text-gray-700 text-xs">IPInfo.io</td>
+                    <td id="ip-ipinfo-ip" class="py-3 text-gray-700 text-sm">加载中...</td>
+                    <td id="ip-ipinfo-addr" class="py-3 text-gray-500 text-sm">-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div
+              class="mt-4 flex items-center justify-between text-sm text-gray-500 bg-white rounded-lg shadow-md border border-gray-200 p-4"
+            >
+              <div>
+                <img class="inline h-4 mr-1" src="/icon/question.svg" alt="隐私保护提示图标" data-tooltip-target="tooltip-default" />
+                <div
+                  id="tooltip-default"
+                  role="tooltip"
+                  class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700"
+                >
+                  提示：截图时，你可以通过右侧的开关隐藏 IP 地址和 IP 地理位置 从而保护你的隐私。
+                  <div class="tooltip-arrow" data-popper-arrow></div>
+                </div>
+              </div>
+              <div>
+                <label class="inline-flex items-center cursor-pointer">
+                  <span class="text-sm font-medium text-gray-700">隐藏 IP</span>
+                  <input id="hide-ip-toggle" type="checkbox" value="" class="sr-only peer" aria-label="隐藏 IP" />
+                  <div
+                    class="ms-3 relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-700 dark:peer-checked:bg-blue-700"
+                  ></div>
+                </label>
+                <label class="ml-2 inline-flex items-center cursor-pointer">
+                  <span class="text-sm font-medium text-gray-700">隐藏国内地理位置</span>
+                  <input id="hide-domestic-geo-toggle" type="checkbox" value="" class="sr-only peer" aria-label="隐藏国内地理位置" />
+                  <div
+                    class="ms-3 relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-700 dark:peer-checked:bg-blue-700"
+                  ></div>
+                </label>
+                <label class="ml-2 inline-flex items-center cursor-pointer">
+                  <span class="text-sm font-medium text-gray-700">隐藏所有地理位置</span>
+                  <input id="hide-all-geo-toggle" type="checkbox" value="" class="sr-only peer" aria-label="隐藏所有地理位置" />
+                  <div
+                    class="ms-3 relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-700 dark:peer-checked:bg-blue-700"
+                  ></div>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6">
+            <h2 class="sr-only">网络连通性测试</h2>
+            <h3 class="text-center text-lg font-semibold mb-3">网络连通性检查</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="p-4 bg-white rounded-lg shadow-md border border-gray-200 text-center probe-tile">
+                <div class="font-semibold">百度搜索</div>
+                <div class="text-sm text-gray-500">国内</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="probe-baidu" class="probe-value text-green-600 text-lg font-semibold mt-2">--ms</div>
+              </div>
+              <div class="p-4 bg-white rounded-lg shadow-md border border-gray-200 text-center probe-tile">
+                <div class="font-semibold">网易云音乐</div>
+                <div class="text-sm text-gray-500">国内</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="probe-163" class="probe-value text-green-600 text-lg font-semibold mt-2">--ms</div>
+              </div>
+              <div class="p-4 bg-white rounded-lg shadow-md border border-gray-200 text-center probe-tile">
+                <div class="font-semibold">GitHub</div>
+                <div class="text-sm text-gray-500">国外</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="probe-github" class="probe-value text-green-600 text-lg font-semibold mt-2">--ms</div>
+              </div>
+              <div class="p-4 bg-white rounded-lg shadow-md border border-gray-200 text-center probe-tile">
+                <div class="font-semibold">YouTube</div>
+                <div class="text-sm text-gray-500">国外</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="probe-youtube" class="probe-value text-green-600 text-lg font-semibold mt-2">--ms</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Right: CDN cards and DNS list -->
+        <aside class="space-y-6 sidebar">
+          <h2 class="sr-only">网络分析工具</h2>
+          <div>
+            <h3 class="text-center text-lg font-semibold mb-3">CDN 命中节点测试</h3>
+            <div id="cdn-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <!-- Cloudflare -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/cloudflare.svg" alt="Cloudflare CDN 服务提供商标志" />
+                <div class="text-sm text-xs">Cloudflare</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-cloudflare-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- Fastly -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/fastly.svg" alt="Fastly CDN 服务提供商标志" />
+                <div class="text-sm text-xs">Fastly</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-fastly-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- Global Cache -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/google.svg" alt="Global Cache" />
+                <div class="text-sm text-xs">Global Cache</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-globalcache-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- jsDelivr -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/jsdelivr.svg" alt="jsDelivr" />
+                <div class="text-sm text-xs">jsDelivr</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-jsdelivr-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- AWS CloudFront -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/cloudfront.svg" alt="AWS CloudFront" />
+                <div class="text-sm text-xs">AWS CloudFront</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-cloudfront-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- Bunny Standard -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/bunny.svg" alt="Bunny Standard" />
+                <div class="text-sm text-xs">Bunny Standard</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-bunnystandard-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- Bunny Volume -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/bunny.svg" alt="Bunny Volume" />
+                <div class="text-sm text-xs">Bunny Volume</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-bunnyvolume-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- CDN77 -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/cdn77.svg" alt="CDN77" />
+                <div class="text-sm text-xs">CDN77</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-cdn77-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- G-Core Labs -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/gcorelabs.svg" alt="G-Core Labs" />
+                <div class="text-sm text-xs">G-Core Labs</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-gcorelabs-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- Virtuozzo (CDN.net) -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/virtuozzo.svg" alt="Virtuozzo (CDN.net)" />
+                <div class="text-sm text-xs">Virtuozzo (CDN.net)</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-virtuozzo-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- OVH CDN -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/ovh.svg" alt="OVH CDN" />
+                <div class="text-sm text-xs">OVH CDN</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-ovh-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- CacheFly -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/cachefly.svg" alt="CacheFly" />
+                <div class="text-sm text-xs">CacheFly</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-cachefly-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- Medianova -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/medianova.svg" alt="Medianova" />
+                <div class="text-sm text-xs">Medianova</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-medianova-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- Zenlayer -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/zenlayer.svg" alt="Zenlayer" />
+                <div class="text-sm text-xs">Zenlayer</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-zenlayer-hit" class="text-sm text-gray-600">-</div>
+              </div>
+              <!-- Melbicom -->
+              <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 text-center">
+                <img class="mx-auto h-8 mb-2" src="/cdn-logo/melbicom.svg" alt="Melbicom" />
+                <div class="text-sm text-xs">Melbicom</div>
+                <div class="outline outline-gray-100 my-2"></div>
+                <div id="cdn-melbicom-hit" class="text-sm text-gray-600">-</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-center font-semibold mb-3">DNS 出口查询</h3>
+            <div id="dns-list" class="space-y-0 text-sm text-gray-700 bg-white rounded-lg shadow-md border border-gray-200 p-4"></div>
+          </div>
+        </aside>
+      </main>
+      <footer class="mt-10 text-center text-sm text-gray-500">
+        Copyright © 2025 <a href="https://github.com/hydrz" class="underline">hydrz</a>. All Rights Reserved.
+      </footer>
+    </div>
+    <script type="module" src="./src/ip.js"></script>
+    <script type="module" src="./src/cdn.js"></script>
+    <script type="module" src="./src/probe.js"></script>
+    <script type="module" src="./src/dns.js"></script>
+  </body>
+</html>
