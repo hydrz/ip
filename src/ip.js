@@ -1,7 +1,4 @@
 // Constants
-const DOMESTIC_SERVICES = ["itdog.cn", "IPIP.net", "腾讯新闻", "speedtest.cn"];
-const CITIES = ["北京市", "上海市", "广州市", "深圳市", "杭州市", "成都市", "武汉市", "南京市"];
-const PROVINCES = ["北京", "上海", "广东", "浙江", "四川", "湖北", "江苏"];
 const JSONP_TIMEOUT = 10000;
 
 // Privacy settings
@@ -9,31 +6,69 @@ let hideIP = false;
 let hideDomesticGeo = false;
 let hideAllGeo = false;
 
+
+// Domestic province-city mapping
+const PROVINCE_CITY_MAP = {
+	北京: ["北京市"],
+	上海: ["上海市"],
+	广东: ["广州市", "深圳市"],
+	浙江: ["杭州市"],
+	四川: ["成都市"],
+	湖北: ["武汉市"],
+	江苏: ["南京市"],
+};
+
+// Domestic ISP list
+const DOMESTIC_ISP_LIST = ["电信", "联通", "移动", "广电", "铁通"];
+
+// Foreign country-city mapping
+const COUNTRY_CITY_MAP = {
+	USA: ["New York", "Los Angeles", "San Francisco", "Chicago"],
+	UK: ["London", "Manchester", "Birmingham"],
+	Japan: ["Tokyo", "Osaka", "Kyoto"],
+	Germany: ["Berlin", "Munich", "Frankfurt"],
+	France: ["Paris", "Marseille", "Lyon"],
+	Canada: ["Toronto", "Vancouver", "Montreal"],
+	Australia: ["Sydney", "Melbourne", "Brisbane"],
+};
+
+// Foreign ISP list
+const FOREIGN_ISP_LIST = ["AT&T", "Verizon", "BT", "NTT", "Deutsche Telekom", "Orange", "Bell", "Telstra"];
+
 // Utility functions
-const isDomesticService = (serviceName) => DOMESTIC_SERVICES.includes(serviceName);
 const generateRandomIP = () => Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join(".");
-const generateRandomAddress = () => {
-	const randomCity = CITIES[Math.floor(Math.random() * CITIES.length)];
-	const randomProvince = PROVINCES[Math.floor(Math.random() * PROVINCES.length)];
-	return `${randomProvince} ${randomCity}`;
+// Generate a random address, supporting both domestic and foreign
+const generateRandomAddress = (isDomestic) => {
+	if (isDomestic) {
+		const provinces = Object.keys(PROVINCE_CITY_MAP);
+		const province = provinces[Math.floor(Math.random() * provinces.length)];
+		const cities = PROVINCE_CITY_MAP[province];
+		const city = cities[Math.floor(Math.random() * cities.length)];
+		const isp = DOMESTIC_ISP_LIST[Math.floor(Math.random() * DOMESTIC_ISP_LIST.length)];
+		return `${province} ${city} ${isp}`;
+	}
+	const countries = Object.keys(COUNTRY_CITY_MAP);
+	const country = countries[Math.floor(Math.random() * countries.length)];
+	const cities = COUNTRY_CITY_MAP[country];
+	const city = cities[Math.floor(Math.random() * cities.length)];
+	const isp = FOREIGN_ISP_LIST[Math.floor(Math.random() * FOREIGN_ISP_LIST.length)];
+	return `${country} ${city} ${isp}`;
 };
 
 // Safe fetch wrapper with retries
 const safeFetch =
 	(serviceName, fetchFn, retries = 3) =>
-	async () => {
-		for (let attempt = 1; attempt <= retries; attempt++) {
-			try {
-				return await fetchFn();
-			} catch (error) {
-				console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
-				if (attempt === retries) {
-					return { ip: "获取失败", addr: "" };
+		async () => {
+			for (let attempt = 1; attempt <= retries; attempt++) {
+				try {
+					return await fetchFn();
+				} catch (error) {
+					console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
+					if (attempt === retries) return { ip: "获取失败", addr: "" };
+					await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 				}
-				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 			}
-		}
-	};
+		};
 
 // Fetch JSON with error handling
 const fetchJson = async (url) => {
@@ -41,19 +76,16 @@ const fetchJson = async (url) => {
 		referrerPolicy: "no-referrer",
 		credentials: "omit",
 	});
-	if (!response.ok) {
-		throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-	}
+	if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 	const contentType = response.headers.get("content-type");
 	return contentType?.includes("application/json") ? await response.json() : await response.text();
 };
 
 // Apply privacy settings
 const applyPrivacySettings = (service, originalIP, originalAddr) => {
-	let displayIP = originalIP;
-	let displayAddr = originalAddr;
-	if (hideIP) displayIP = generateRandomIP();
-	if (hideAllGeo || (hideDomesticGeo && isDomesticService(service.name))) displayAddr = generateRandomAddress();
+	const displayIP = hideIP ? generateRandomIP() : originalIP;
+	const displayAddr =
+		hideAllGeo || (hideDomesticGeo && service.isDomestic) ? generateRandomAddress(service.isDomestic) : originalAddr;
 	return { displayIP, displayAddr };
 };
 
@@ -61,6 +93,7 @@ const applyPrivacySettings = (service, originalIP, originalAddr) => {
 const IP_SERVICES = [
 	{
 		name: "itdog",
+		isDomestic: true,
 		fetch: safeFetch("itdog.cn", async () => {
 			const data = await fetchJson("https://ipv4_cm.itdog.cn/");
 			const { ip = "-", address: addr = "-" } = JSON.parse(data);
@@ -69,6 +102,7 @@ const IP_SERVICES = [
 	},
 	{
 		name: "edgeone",
+		isDomestic: true,
 		fetch: safeFetch("edgeone.run", async () => {
 			const data = await fetchJson("https://functions-geolocation.edgeone.run/geo");
 			const { eo: { geo: { countryName, regionName, cityName, cisp } = {}, clientIp: ip = "-" } = {} } = data || {};
@@ -82,38 +116,32 @@ const IP_SERVICES = [
 	},
 	{
 		name: "tencent",
+		isDomestic: true,
 		fetch: safeFetch("腾讯新闻", async () => {
-			// 腾讯新闻使用JSONP，直接在主线程处理
 			const result = await new Promise((resolve, reject) => {
 				const callbackName = `__jsonp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}__`;
 				const script = document.createElement("script");
-
 				const cleanup = () => {
 					script.remove();
 					delete window[callbackName];
 				};
-
 				const timeout = setTimeout(() => {
 					cleanup();
 					reject(new Error("JSONP request timeout"));
 				}, JSONP_TIMEOUT);
-
 				window[callbackName] = (data) => {
 					clearTimeout(timeout);
 					cleanup();
 					resolve(data);
 				};
-
 				script.src = `https://r.inews.qq.com/api/ip2city?otype=jsonp&callback=${callbackName}`;
 				script.onerror = () => {
 					clearTimeout(timeout);
 					cleanup();
 					reject(new Error("JSONP script load error"));
 				};
-
 				document.head.appendChild(script);
 			});
-
 			const { ip = "-", country, province, city } = result;
 			const addr = [country, province, city].filter(Boolean).join(" ") || "-";
 			return { ip, addr };
@@ -121,6 +149,7 @@ const IP_SERVICES = [
 	},
 	{
 		name: "speedtest",
+		isDomestic: true,
 		fetch: safeFetch("speedtest.cn", async () => {
 			const response = await fetchJson("https://api-v3.speedtest.cn/ip");
 			const { code, data } = response;
@@ -137,11 +166,7 @@ const IP_SERVICES = [
 				referrerPolicy: "no-referrer",
 				credentials: "omit",
 			});
-
-			if (!response.ok) {
-				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-			}
-
+			if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 			const text = await response.text();
 			const ipMatch = text.match(/ip=(.+)/);
 			const locMatch = text.match(/loc=(.+)/);
@@ -180,6 +205,21 @@ const IP_SERVICES = [
 	},
 ];
 
+// Get element IDs for service
+const serviceElementIDs = (service) => ({
+	ipID: `ip-${service.name}-ip`,
+	addrID: `ip-${service.name}-addr`,
+});
+
+// Store original data in DOM
+const storeOriginalData = (service, ip, addr) => {
+	const { ipID, addrID } = serviceElementIDs(service);
+	const ipCell = document.getElementById(ipID);
+	const addrCell = document.getElementById(addrID);
+	if (ipCell) ipCell.dataset.originalIp = ip;
+	if (addrCell) addrCell.dataset.originalAddr = addr;
+};
+
 // Fill result with privacy applied
 const fillResult = (service, ip, addr) => {
 	const { displayIP, displayAddr } = applyPrivacySettings(service, ip, addr);
@@ -192,25 +232,26 @@ const fillResult = (service, ip, addr) => {
 
 // Fetch IP data
 const fetchIpData = async () => {
-	const promises = IP_SERVICES.map(async (service) => {
-		try {
-			const controller = new AbortController();
-			const timeoutId = setTimeout(() => controller.abort(), 5000);
-			const { ip, addr } = await service.fetch();
-			clearTimeout(timeoutId);
-			storeOriginalData(service, ip, addr);
-			fillResult(service, ip, addr);
-		} catch (error) {
-			console.error(`Unexpected error for ${service.name}:`, error.message);
-			fillResult(service, "网络错误，请重试", "");
-		}
-	});
-	await Promise.all(promises);
+	await Promise.all(
+		IP_SERVICES.map(async (service) => {
+			try {
+				const controller = new AbortController();
+				const timeoutId = setTimeout(() => controller.abort(), 5000);
+				const { ip, addr } = await service.fetch();
+				clearTimeout(timeoutId);
+				storeOriginalData(service, ip, addr);
+				fillResult(service, ip, addr);
+			} catch (error) {
+				console.error(`Unexpected error for ${service.name}:`, error.message);
+				fillResult(service, "网络错误，请重试", "");
+			}
+		}),
+	);
 };
 
 // Update all displays
 const updateAllDisplays = () => {
-	for (const service of IP_SERVICES) {
+	IP_SERVICES.forEach((service) => {
 		const { ipID, addrID } = serviceElementIDs(service);
 		const ipCell = document.getElementById(ipID);
 		const addrCell = document.getElementById(addrID);
@@ -221,12 +262,12 @@ const updateAllDisplays = () => {
 			ipCell.textContent = displayIP;
 			addrCell.textContent = displayAddr;
 		}
-	}
+	});
 };
 
 // Initialize toggle listeners
 const initToggleListeners = () => {
-	const toggles = [
+	[
 		{
 			id: "hide-ip-toggle",
 			handler: (checked) => {
@@ -245,8 +286,7 @@ const initToggleListeners = () => {
 				hideAllGeo = checked;
 			},
 		},
-	];
-	toggles.forEach(({ id, handler }) => {
+	].forEach(({ id, handler }) => {
 		const toggle = document.getElementById(id);
 		if (toggle) {
 			toggle.addEventListener("change", (e) => {
@@ -271,19 +311,6 @@ const initTooltip = () => {
 			tooltip.classList.remove("opacity-100");
 		});
 	}
-};
-
-const serviceElementIDs = (service) => ({
-	ipID: `ip-${service.name}-ip`,
-	addrID: `ip-${service.name}-addr`,
-});
-
-const storeOriginalData = (service, ip, addr) => {
-	const { ipID, addrID } = serviceElementIDs(service);
-	const ipCell = document.getElementById(ipID);
-	const addrCell = document.getElementById(addrID);
-	if (ipCell) ipCell.dataset.originalIp = ip;
-	if (addrCell) addrCell.dataset.originalAddr = addr;
 };
 
 window.addEventListener("DOMContentLoaded", () => {
