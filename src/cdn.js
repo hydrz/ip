@@ -36,15 +36,15 @@ const CDN_TESTS = [
 		id: "cdn-edge-hit",
 		name: "EdgeOne",
 		fetch: async () => {
-			const response = await fetch("https://edge.hydrz.cn/favicon.svg", {
-				method: "HEAD",
-				referrerPolicy: "no-referrer",
-				credentials: "omit",
-			});
-			const headers = response.headers;
-			const colo = headers.get("cf-ray")?.split("-")[1];
-			const city = headers.get("hydrz-client-ip-city");
-			return `${city} -> ${colo}`;
+			const response = await fetch('https://edge.hydrz.cn/cdn-cgi/trace');
+			const text = await response.text();
+			const [loc, colo] = text.split('\n').reduce((acc, line) => {
+				const [key, value] = line.split('=');
+				if (key === 'loc') acc[0] = value;
+				if (key === 'colo') acc[1] = value;
+				return acc;
+			}, ['', '']);
+			return `${loc}->CF-${colo}`;
 		},
 	},
 	{
