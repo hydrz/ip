@@ -21,12 +21,13 @@
     <link rel="canonical" href="https://ip.hydrz.cn/" />
     <link rel="stylesheet" href="./src/style.css" />
     <style>
+      /* Specific table row styles */
       .ip-row {
         grid-template-columns: 3em 1fr 2fr 2fr;
       }
 
       .dns-row {
-        grid-template-columns: 3em 2fr 1fr 2fr;
+        grid-template-columns: 3em 1fr 1fr 2fr;
       }
     </style>
   </head>
@@ -38,7 +39,7 @@
           <h2 class="sr-only">IP地址信息查询</h2>
           <div>
             <h1 class="title">IP 地址查询</h1>
-            <div class="card">
+            <div class="card" tabindex="0">
               <div id="ip-table" class="table">
                 <div class="sr-only">IP 地址查询结果</div>
                 <div class="table-body">
@@ -106,13 +107,13 @@
             </div>
             <div class="controls">
               <div>
-                <img class="icon" src="/icon/question.svg" alt="隐私保护提示图标" data-tooltip-target="tooltip-default" />
+                <img class="icon" src="/icon/question.svg" alt="隐私保护提示图标" tabindex="0" />
                 <div id="tooltip-default" role="tooltip" class="tooltip">
                   提示：截图时，你可以通过右侧的开关隐藏 IP 地址和 IP 地理位置 从而保护你的隐私。
                   <div class="tooltip-arrow" data-popper-arrow></div>
                 </div>
               </div>
-              <div style="display: flex">
+              <div style="display: flex; flex-wrap: wrap">
                 <label class="switch">
                   <span class="text-label">隐藏 IP</span>
                   <input id="hide-ip-toggle" type="checkbox" value="" class="switch-input" aria-label="隐藏 IP" />
@@ -277,7 +278,7 @@
           </div>
           <div class="">
             <h3 class="title">DNS 出口查询</h3>
-            <div class="card">
+            <div class="card" tabindex="0">
               <div id="dns-list" class="table">
                 <div class="table-header dns-row">
                   <div class="table-cell text-title">服务商</div>
