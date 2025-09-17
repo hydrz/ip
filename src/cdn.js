@@ -256,6 +256,7 @@ const CDN_TESTS = [
 				method: 'HEAD',
 				referrerPolicy: 'no-referrer',
 				credentials: 'omit',
+				mode: 'cors',  // 尝试cors模式
 			});
 			const headers = response.headers;
 			const location = headers.get('x-edge-location');
