@@ -248,6 +248,20 @@ const CDN_TESTS = [
 			return "-";
 		},
 	},
+	{
+		id: 'cdn-keycdn-hit',
+		name: 'KeyCDN',
+		fetch: async () => {
+			const response = await fetch('https://www.keycdn.com/favicon.ico', {
+				method: 'HEAD',
+				referrerPolicy: 'no-referrer',
+				credentials: 'omit',
+			});
+			const headers = response.headers;
+			const location = headers.get('x-edge-location');
+			return location || '-';
+		},
+	},
 ];
 
 // Run CDN tests with retries
