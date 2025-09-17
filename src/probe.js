@@ -27,9 +27,9 @@ async function testLatency(domain) {
 	try {
 		const startTime = performance.now();
 		await fetch(`https://${domain}/favicon.ico`, {
-			method: 'HEAD',
-			mode: 'no-cors',
-			cache: 'no-cache'
+			method: "HEAD",
+			mode: "no-cors",
+			cache: "no-cache",
 		});
 		const latency = performance.now() - startTime;
 		return Math.round(latency);
@@ -56,8 +56,7 @@ async function runMultipleTests(domain, count = 10) {
 	}
 
 	// 计算平均值
-	const average =
-		results.reduce((sum, latency) => sum + latency, 0) / results.length;
+	const average = results.reduce((sum, latency) => sum + latency, 0) / results.length;
 	return Math.round(average);
 }
 
@@ -66,17 +65,19 @@ function updateProbeResult(elementId, latency) {
 	const element = document.getElementById(elementId);
 	if (element) {
 		if (latency === null) {
+			element.className = "text-content text-error";
 			element.textContent = "超时";
-			element.className = element.className.replace(
-				"text-green-600",
-				"text-red-600",
-			);
+			return;
+		}
+
+		element.textContent = `${latency}ms`;
+
+		if (latency < 100) {
+			element.className = "text-content text-success";
+		} else if (latency < 300) {
+			element.className = "text-content text-warning";
 		} else {
-			element.textContent = `${latency}ms`;
-			element.className = element.className.replace(
-				"text-red-600",
-				"text-green-600",
-			);
+			element.className = "text-content text-error";
 		}
 	}
 }

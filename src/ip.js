@@ -1,16 +1,7 @@
 // 常量配置
 const DOMESTIC_SERVICES = ["itdog.cn", "IPIP.net", "腾讯新闻", "speedtest.cn"];
 
-const CITIES = [
-	"北京市",
-	"上海市",
-	"广州市",
-	"深圳市",
-	"杭州市",
-	"成都市",
-	"武汉市",
-	"南京市",
-];
+const CITIES = ["北京市", "上海市", "广州市", "深圳市", "杭州市", "成都市", "武汉市", "南京市"];
 
 const PROVINCES = ["北京", "上海", "广东", "浙江", "四川", "湖北", "江苏"];
 
@@ -22,16 +13,13 @@ let hideDomesticGeo = false;
 let hideAllGeo = false;
 
 // 工具函数
-const isDomesticService = (serviceName) =>
-	DOMESTIC_SERVICES.includes(serviceName);
+const isDomesticService = (serviceName) => DOMESTIC_SERVICES.includes(serviceName);
 
-const generateRandomIP = () =>
-	Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join(".");
+const generateRandomIP = () => Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join(".");
 
 const generateRandomAddress = () => {
 	const randomCity = CITIES[Math.floor(Math.random() * CITIES.length)];
-	const randomProvince =
-		PROVINCES[Math.floor(Math.random() * PROVINCES.length)];
+	const randomProvince = PROVINCES[Math.floor(Math.random() * PROVINCES.length)];
 	return `${randomProvince} ${randomCity}`;
 };
 
@@ -48,16 +36,16 @@ const safeFetch = (serviceName, fetchFn) => async () => {
 // 通用fetch函数
 const fetchJson = async (url) => {
 	const response = await fetch(url, {
-		referrerPolicy: 'no-referrer',
-		credentials: 'omit'
+		referrerPolicy: "no-referrer",
+		credentials: "omit",
 	});
 
 	if (!response.ok) {
 		throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 	}
 
-	const contentType = response.headers.get('content-type');
-	if (contentType?.includes('application/json')) {
+	const contentType = response.headers.get("content-type");
+	if (contentType?.includes("application/json")) {
 		return await response.json();
 	} else {
 		return await response.text();
@@ -156,8 +144,7 @@ const IP_SERVICES = [
 			const { code, data } = response;
 			if (code !== 0 || !data) return { ip: "获取失败", addr: "" };
 			const { ip = "-", country, province, city, isp } = data;
-			const addr =
-				[country, province, city, isp].filter(Boolean).join(" ") || "-";
+			const addr = [country, province, city, isp].filter(Boolean).join(" ") || "-";
 			return { ip, addr };
 		}),
 	},
@@ -167,8 +154,8 @@ const IP_SERVICES = [
 		addrId: "ip-cloudflare-addr",
 		fetch: safeFetch("Cloudflare", async () => {
 			const response = await fetch("https://cloudflare.com/cdn-cgi/trace", {
-				referrerPolicy: 'no-referrer',
-				credentials: 'omit'
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
 			});
 
 			if (!response.ok) {
@@ -222,6 +209,7 @@ const IP_SERVICES = [
 // 填充 IP 和地址
 const fillResult = (service, ip, addr) => {
 	const { displayIP, displayAddr } = applyPrivacySettings(service, ip, addr);
+
 	const ipCell = document.getElementById(service.ipId);
 	const addrCell = document.getElementById(service.addrId);
 	if (ipCell) ipCell.textContent = displayIP;
@@ -249,13 +237,8 @@ const updateAllDisplays = () => {
 		const addrCell = document.getElementById(service.addrId);
 		if (ipCell && addrCell) {
 			const originalIP = ipCell.dataset.originalIp || ipCell.textContent;
-			const originalAddr =
-				addrCell.dataset.originalAddr || addrCell.textContent;
-			const { displayIP, displayAddr } = applyPrivacySettings(
-				service,
-				originalIP,
-				originalAddr,
-			);
+			const originalAddr = addrCell.dataset.originalAddr || addrCell.textContent;
+			const { displayIP, displayAddr } = applyPrivacySettings(service, originalIP, originalAddr);
 			ipCell.textContent = displayIP;
 			addrCell.textContent = displayAddr;
 		}
@@ -298,9 +281,7 @@ const initToggleListeners = () => {
 
 // 初始化 tooltip
 const initTooltip = () => {
-	const tooltipTrigger = document.querySelector(
-		'[data-tooltip-target="tooltip-default"]',
-	);
+	const tooltipTrigger = document.querySelector('[data-tooltip-target="tooltip-default"]');
 	const tooltip = document.getElementById("tooltip-default");
 
 	if (tooltipTrigger && tooltip) {

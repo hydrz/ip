@@ -1,14 +1,19 @@
 {
-  "name": "ip",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "vite": "^7.1.2"
-  }
+	"name": "ip",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "npm run build && vite preview",
+		"deploy": "npm run build && wrangler deploy",
+		"lint": "biome check --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.2.4",
+		"@cloudflare/vite-plugin": "^1.13.2",
+		"vite": "^7.1.2",
+		"wrangler": "^4.37.1"
+	}
 }

@@ -175,13 +175,11 @@ const CDN_TESTS = [
 async function fetchHeaders(url) {
 	try {
 		// 将相对URL转换为绝对URL
-		const absoluteUrl = url.startsWith("http")
-			? url
-			: window.location.origin + url;
+		const absoluteUrl = url.startsWith("http") ? url : window.location.origin + url;
 		const response = await fetch(absoluteUrl, {
-			method: 'HEAD',
-			referrerPolicy: 'no-referrer',
-			credentials: 'omit'
+			method: "HEAD",
+			referrerPolicy: "no-referrer",
+			credentials: "omit",
 		});
 
 		if (!response.ok) {

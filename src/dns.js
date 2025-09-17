@@ -12,8 +12,7 @@ const MAX_ATTEMPTS_ALIYUN = 4;
 const DNS_SERVICES = [
 	{
 		name: "Fastly",
-		url: (timestamp, random) =>
-			`https://${timestamp}-${random}.u.fastly-analytics.com/debug_resolver`,
+		url: (timestamp, random) => `https://${timestamp}-${random}.u.fastly-analytics.com/debug_resolver`,
 		parse: (data) => {
 			const resolver = data.dns_resolver_info;
 			if (resolver?.ip) {
@@ -29,8 +28,7 @@ const DNS_SERVICES = [
 	},
 	{
 		name: "IPAPI",
-		url: (timestamp, random) =>
-			`https://${timestamp}-${random}--hydrz.edns.ip-api.com/json`,
+		url: (timestamp, random) => `https://${timestamp}-${random}--hydrz.edns.ip-api.com/json`,
 		parse: (data) => {
 			const dnsInfo = data.dns;
 			if (dnsInfo?.ip) {
@@ -86,17 +84,17 @@ async function fetchDNSInfo(service) {
 
 		// 使用直接fetch请求
 		const response = await fetch(url, {
-			referrerPolicy: 'no-referrer',
-			credentials: 'omit'
+			referrerPolicy: "no-referrer",
+			credentials: "omit",
 		});
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 		}
 
-		const contentType = response.headers.get('content-type');
+		const contentType = response.headers.get("content-type");
 		let data;
-		if (contentType?.includes('application/json')) {
+		if (contentType?.includes("application/json")) {
 			data = await response.json();
 		} else {
 			data = await response.text();
@@ -121,55 +119,36 @@ async function fetchDNSInfo(service) {
 
 // 更新DNS列表显示
 function updateDNSList(dnsData) {
-	const dnsListElement = document.getElementById("dns-list");
-	if (!dnsListElement) return;
+	const dnsDataElement = document.getElementById("dns-data");
+	if (!dnsDataElement) return;
 
 	// 使用DocumentFragment进行批量DOM更新，提高性能
 	const fragment = document.createDocumentFragment();
 
-	// 创建容器
-	const container = document.createElement("div");
-	container.className = "divide-y divide-gray-100";
-
-	// 添加表头
-	const headerDiv = document.createElement("div");
-	headerDiv.className =
-		"grid grid-cols-4 gap-4 py-2 font-medium text-gray-700 text-sm border-b border-gray-200";
-
-	const headers = ["Provider", "ISP", "IP Address", "Location"];
-	headers.forEach((headerText) => {
-		const headerCell = document.createElement("div");
-		headerCell.className = "text-center";
-		headerCell.textContent = headerText;
-		headerDiv.appendChild(headerCell);
-	});
-
-	container.appendChild(headerDiv);
-
 	// 添加新的DNS条目
 	dnsData.forEach(({ ip, provider, isp, location }) => {
 		const rowDiv = document.createElement("div");
-		rowDiv.className = "grid grid-cols-4 gap-4 py-2 text-sm";
+		rowDiv.className = "table-row";
 
 		// Provider列
 		const providerDiv = document.createElement("div");
-		providerDiv.className = "text-center font-medium text-gray-900";
+		providerDiv.className = "table-cell text-title";
 		providerDiv.textContent = provider;
 
 		// ISP列
 		const ispDiv = document.createElement("div");
-		ispDiv.className = "text-center text-gray-600 truncate";
+		ispDiv.className = "table-cell text-meta";
 		ispDiv.title = isp || "Unknown ISP"; // 添加完整文本的tooltip
 		ispDiv.textContent = isp || "Unknown ISP";
 
 		// IP列
 		const ipDiv = document.createElement("div");
-		ipDiv.className = "text-center font-mono text-gray-800";
+		ipDiv.className = "table-cell text-content";
 		ipDiv.textContent = ip;
 
 		// Location列
 		const locationDiv = document.createElement("div");
-		locationDiv.className = "text-center text-gray-500 truncate";
+		locationDiv.className = "table-cell text-meta";
 		locationDiv.title = location || "Unknown Location"; // 添加完整文本的tooltip
 		locationDiv.textContent = location || "Unknown Location";
 
@@ -178,14 +157,12 @@ function updateDNSList(dnsData) {
 		rowDiv.appendChild(ipDiv);
 		rowDiv.appendChild(locationDiv);
 
-		container.appendChild(rowDiv);
+		fragment.appendChild(rowDiv);
 	});
 
-	fragment.appendChild(container);
-
 	// 清空现有内容并一次性更新DOM
-	dnsListElement.innerHTML = "";
-	dnsListElement.appendChild(fragment);
+	dnsDataElement.innerHTML = "";
+	dnsDataElement.appendChild(fragment);
 }
 
 // 运行DNS查询的主函数
@@ -206,8 +183,7 @@ async function runDNSQueries() {
 	// 并发运行所有DNS服务查询
 	const promises = DNS_SERVICES.map(async (service) => {
 		let attempts = 0;
-		const maxAttempts =
-			service.name === "AliYun" ? MAX_ATTEMPTS_ALIYUN : MAX_ATTEMPTS_DEFAULT;
+		const maxAttempts = service.name === "AliYun" ? MAX_ATTEMPTS_ALIYUN : MAX_ATTEMPTS_DEFAULT;
 
 		while (attempts < maxAttempts && dnsData.length < maxResults) {
 			const result = await fetchDNSInfo(service);
@@ -216,10 +192,7 @@ async function runDNSQueries() {
 				if (Array.isArray(result)) {
 					// Surfshark 返回数组
 					for (const item of result) {
-						if (
-							dnsData.length < maxResults &&
-							!dnsData.some((d) => d.ip === item.ip)
-						) {
+						if (dnsData.length < maxResults && !dnsData.some((d) => d.ip === item.ip)) {
 							dnsData.push(item);
 							addedNew = true;
 						}

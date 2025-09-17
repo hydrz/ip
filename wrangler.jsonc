@@ -1,0 +1,13 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "ip",
+	"compatibility_date": "2025-09-06",
+	"assets": {
+		"directory": "./public"
+	},
+	"observability": {
+		"enabled": false
+	},
+	"workers_dev": false,
+	"routes": [ { "pattern": "ip.hydrz.cn/*", "zone_name": "hydrz.cn" } ]
+}
