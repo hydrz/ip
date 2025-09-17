@@ -3,8 +3,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-cloudflare-hit",
 		name: "Cloudflare",
-		url: "/favicon.svg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("/favicon.svg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const colo = headers.get("cf-ray")?.split("-")[1];
 			return colo || "-";
 		},
@@ -12,8 +17,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-fastly-hit",
 		name: "Fastly",
-		url: "https://any.pops.fastly-analytics.com",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://any.pops.fastly-analytics.com", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const xServedBy = headers.get("x-served-by");
 			if (xServedBy) {
 				const parts = xServedBy.split("-");
@@ -23,19 +33,30 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-globalcache-hit",
-		name: "Global Cache",
-		url: "https://media-edge.1e100cdn.net/pics/500b-bench.jpg",
-		parse: (headers) => {
-			const cacheStatus = headers.get("cache-status");
-			return cacheStatus?.split(";")[0] || "-";
+		id: "cdn-edge-hit",
+		name: "EdgeOne",
+		fetch: async () => {
+			const response = await fetch("https://edge.hydrz.cn/favicon.svg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
+			const colo = headers.get("cf-ray")?.split("-")[1];
+			const city = headers.get("hydrz-client-ip-city");
+			return `${city} -> ${colo}`;
 		},
 	},
 	{
 		id: "cdn-jsdelivr-hit",
 		name: "jsDelivr",
-		url: "https://cdn.jsdelivr.net/npm/sukkaw@latest/package.json",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const server = headers.get("Server");
 			if (server && /cloudflare/i.test(server)) {
 				const cfRay = headers.get("cf-ray");
@@ -55,8 +76,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-cloudfront-hit",
 		name: "AWS CloudFront",
-		url: "https://d3888oxgux3fey.cloudfront.net/500b-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://d3888oxgux3fey.cloudfront.net/500b-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const pop = headers.get("x-amz-cf-pop");
 			return pop?.split(";")[0] || "-";
 		},
@@ -64,8 +90,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-bunnystandard-hit",
 		name: "Bunny Standard",
-		url: "https://test.b-cdn.net/",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://test.b-cdn.net/", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const server = headers.get("Server");
 			if (server) {
 				const parts = server.split("-");
@@ -77,8 +108,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-bunnyvolume-hit",
 		name: "Bunny Volume",
-		url: "https://testvideo.b-cdn.net/",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://testvideo.b-cdn.net/", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const server = headers.get("Server");
 			if (server) {
 				const parts = server.split("-");
@@ -90,8 +126,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-cdn77-hit",
 		name: "CDN77",
-		url: "https://1596384882.rsc.cdn77.org/500b-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://1596384882.rsc.cdn77.org/500b-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const pop = headers.get("x-77-pop");
 			return pop || "-";
 		},
@@ -99,8 +140,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-gcorelabs-hit",
 		name: "G-Core Labs",
-		url: "https://perfops.gcorelabs.com/500b-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://perfops.gcorelabs.com/500b-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const id = headers.get("x-id");
 			return id?.replace(/-edge/i, "") || "-";
 		},
@@ -108,8 +154,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-virtuozzo-hit",
 		name: "Virtuozzo (CDN.net)",
-		url: "https://perfops.r.worldssl.net/500b-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://perfops.r.worldssl.net/500b-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const location = headers.get("x-edge-location");
 			return location || "-";
 		},
@@ -117,8 +168,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-ovh-hit",
 		name: "OVH CDN",
-		url: "https://ovh-cdn.perfops.io/500b-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://ovh-cdn.perfops.io/500b-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const pop = headers.get("x-cdn-pop");
 			return pop || "-";
 		},
@@ -126,8 +182,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-cachefly-hit",
 		name: "CacheFly",
-		url: "https://cdnperf.cachefly.net/500b-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://cdnperf.cachefly.net/500b-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const cf1 = headers.get("x-cf1");
 			if (cf1) {
 				return cf1.split(":")[4]?.split(".")[1] || "-";
@@ -138,8 +199,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-medianova-hit",
 		name: "Medianova",
-		url: "https://medianova-cdnvperf.mncdn.com/500b-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://medianova-cdnvperf.mncdn.com/500b-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const location = headers.get("x-edge-location");
 			return location || "-";
 		},
@@ -147,8 +213,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-zenlayer-hit",
 		name: "Zenlayer",
-		url: "https://test-perfops.ecn.zenlayer.net/500b-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://test-perfops.ecn.zenlayer.net/500b-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const via = headers.get("via");
 			if (via) {
 				const matches = via.match(/\s[A-Z]{2}\.[\dA-Z]{2,}/g);
@@ -160,8 +231,13 @@ const CDN_TESTS = [
 	{
 		id: "cdn-melbicom-hit",
 		name: "Melbicom",
-		url: "https://perfops.swiftycdn.net/500b-sw-bench.jpg",
-		parse: (headers) => {
+		fetch: async () => {
+			const response = await fetch("https://perfops.swiftycdn.net/500b-sw-bench.jpg", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			const headers = response.headers;
 			const node = headers.get("x-swifty-node");
 			if (node) {
 				return node;
@@ -171,44 +247,14 @@ const CDN_TESTS = [
 	},
 ];
 
-// 获取响应头
-async function fetchHeaders(url) {
-	try {
-		// 将相对URL转换为绝对URL
-		const absoluteUrl = url.startsWith("http") ? url : window.location.origin + url;
-		const response = await fetch(absoluteUrl, {
-			method: "HEAD",
-			referrerPolicy: "no-referrer",
-			credentials: "omit",
-		});
-
-		if (!response.ok) {
-			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-		}
-
-		return response.headers;
-	} catch (error) {
-		console.error(`Failed to fetch headers from ${url}:`, error);
-		return null;
-	}
-}
-
 // 运行CDN测试
 async function runCDNTests() {
 	for (const test of CDN_TESTS) {
 		try {
-			const headers = await fetchHeaders(test.url);
-			if (headers) {
-				const result = test.parse(headers);
-				const element = document.getElementById(test.id);
-				if (element) {
-					element.textContent = result;
-				}
-			} else {
-				const element = document.getElementById(test.id);
-				if (element) {
-					element.textContent = "获取失败";
-				}
+			const text = await test.fetch();
+			const element = document.getElementById(test.id);
+			if (element) {
+				element.textContent = text;
 			}
 		} catch (error) {
 			console.error(`Failed to test ${test.name}:`, error);

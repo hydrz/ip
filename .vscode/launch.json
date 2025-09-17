@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Debug with Edge",
+            "configurations": [ "Run npm run dev", "Launch Edge" ]
+        }
+    ],
+    "configurations": [
+        {
+            "command": "npm run dev",
+            "name": "Run npm run dev",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}"
+        },
+    ]
+}

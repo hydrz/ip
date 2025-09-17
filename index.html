@@ -20,6 +20,15 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href="https://ip.hydrz.cn/" />
     <link rel="stylesheet" href="./src/style.css" />
+    <style>
+      .ip-row {
+        grid-template-columns: 3em 1fr 2fr 2fr;
+      }
+
+      .dns-row {
+        grid-template-columns: 3em 2fr 1fr 2fr;
+      }
+    </style>
   </head>
   <body class="body-style">
     <div class="container">
@@ -34,59 +43,59 @@
                 <div class="sr-only">IP 地址查询结果</div>
                 <div class="table-body">
                   <!-- itdog.cn -->
-                  <div class="table-row">
+                  <div class="table-row ip-row">
                     <div class="table-cell text-title" data-label="类型">国内</div>
-                    <div class="table-cell text-subtitle" data-label="服务">ipv4.itdog.cn</div>
-                    <div id="ip-itdog-ipv4-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div id="ip-itdog-ipv4-addr" class="table-cell text-meta" data-label="位置">-</div>
+                    <div class="table-cell text-subtitle" data-label="服务">itdog.cn</div>
+                    <div id="ip-itdog-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
+                    <div id="ip-itdog-addr" class="table-cell text-meta" data-label="位置">-</div>
                   </div>
 
-                  <!-- IPIP.net -->
-                  <div class="table-row">
+                  <!-- edgeone -->
+                  <div class="table-row ip-row">
                     <div class="table-cell text-title" data-label="类型">国内</div>
-                    <div class="table-cell text-subtitle" data-label="服务">ipv6.itdog.cn</div>
-                    <div id="ip-itdog-ipv6-ip" class="table-cell text-content" data-label="IP地址">
+                    <div class="table-cell text-subtitle" data-label="服务">edgeone</div>
+                    <div id="ip-edgeone-ip" class="table-cell text-content" data-label="IP地址">
                       <span class="text-loading">加载中...</span>
                     </div>
-                    <div id="ip-itdog-ipv6-addr" class="table-cell text-meta" data-label="位置">-</div>
+                    <div id="ip-edgeone-addr" class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- 腾讯新闻 -->
-                  <div class="table-row">
+                  <div class="table-row ip-row">
                     <div class="table-cell text-title" data-label="类型">国内</div>
                     <div class="table-cell text-subtitle" data-label="服务">腾讯新闻</div>
                     <div id="ip-tencent-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
                     <div id="ip-tencent-addr" class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- speedtest.cn -->
-                  <div class="table-row">
+                  <div class="table-row ip-row">
                     <div class="table-cell text-title" data-label="类型">国内</div>
                     <div class="table-cell text-subtitle" data-label="服务">speedtest.cn</div>
                     <div id="ip-speedtest-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
                     <div id="ip-speedtest-addr" class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- Cloudflare -->
-                  <div class="table-row">
+                  <div class="table-row ip-row">
                     <div class="table-cell text-title" data-label="类型">国外</div>
                     <div class="table-cell text-subtitle" data-label="服务">Cloudflare</div>
                     <div id="ip-cloudflare-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
                     <div id="ip-cloudflare-addr" class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- IP.SB -->
-                  <div class="table-row">
+                  <div class="table-row ip-row">
                     <div class="table-cell text-title" data-label="类型">国外</div>
                     <div class="table-cell text-subtitle" data-label="服务">IP.SB</div>
                     <div id="ip-ipsb-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
                     <div id="ip-ipsb-addr" class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- ip-api.com -->
-                  <div class="table-row">
+                  <div class="table-row ip-row">
                     <div class="table-cell text-title" data-label="类型">国外</div>
                     <div class="table-cell text-subtitle" data-label="服务">ip-api.com</div>
                     <div id="ip-ipapi-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
                     <div id="ip-ipapi-addr" class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- IPInfo.io -->
-                  <div class="table-row">
+                  <div class="table-row ip-row">
                     <div class="table-cell text-title" data-label="类型">国外</div>
                     <div class="table-cell text-subtitle" data-label="服务">IPInfo.io</div>
                     <div id="ip-ipinfo-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
@@ -173,12 +182,12 @@
                 <div class="divider"></div>
                 <div id="cdn-fastly-hit" class="text-meta">-</div>
               </div>
-              <!-- Global Cache -->
+              <!-- EdgeOne -->
               <div class="card card-col">
-                <img class="card-icon" src="/cdn-logo/google.svg" alt="Global Cache" />
-                <div class="text-meta">Global Cache</div>
+                <img class="card-icon" src="/cdn-logo/edgeone.png" alt="EdgeOne" />
+                <div class="text-meta">EdgeOne</div>
                 <div class="divider"></div>
-                <div id="cdn-globalcache-hit" class="text-meta">-</div>
+                <div id="cdn-edge-hit" class="text-meta">-</div>
               </div>
               <!-- jsDelivr -->
               <div class="card card-col">
@@ -270,7 +279,7 @@
             <h3 class="title">DNS 出口查询</h3>
             <div class="card">
               <div id="dns-list" class="table">
-                <div class="table-header">
+                <div class="table-header dns-row">
                   <div class="table-cell text-title">服务商</div>
                   <div class="table-cell text-title">运营商</div>
                   <div class="table-cell text-title">IP地址</div>

@@ -128,7 +128,7 @@ function updateDNSList(dnsData) {
 	// 添加新的DNS条目
 	dnsData.forEach(({ ip, provider, isp, location }) => {
 		const rowDiv = document.createElement("div");
-		rowDiv.className = "table-row";
+		rowDiv.className = "table-row dns-row";
 
 		// Provider列
 		const providerDiv = document.createElement("div");

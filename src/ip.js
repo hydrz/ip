@@ -75,9 +75,7 @@ const applyPrivacySettings = (service, originalIP, originalAddr) => {
 // IP 服务列表
 const IP_SERVICES = [
 	{
-		name: "ipv4.itdog.cn",
-		ipId: "ip-itdog-ipv4-ip",
-		addrId: "ip-itdog-ipv4-addr",
+		name: "itdog",
 		fetch: safeFetch("itdog.cn", async () => {
 			const data = await fetchJson("https://ipv4_cm.itdog.cn/");
 			const { ip = "-", address: addr = "-" } = JSON.parse(data);
@@ -85,19 +83,16 @@ const IP_SERVICES = [
 		}),
 	},
 	{
-		name: "ipv6.itdog.cn",
-		ipId: "ip-itdog-ipv6-ip",
-		addrId: "ip-itdog-ipv6-addr",
-		fetch: safeFetch("itdog.cn", async () => {
-			const data = await fetchJson("https://ipv6_cm.itdog.cn/");
-			const { ip = "-", address: addr = "-" } = JSON.parse(data);
+		name: "edgeone",
+		fetch: safeFetch("edgeone.run", async () => {
+			const data = await fetchJson("https://functions-geolocation.edgeone.run/geo");
+			const { eo: { geo: { countryName, regionName, cityName, cisp } = {}, clientIp: ip = "-" } = {} } = data || {};
+			const addr = [countryName, regionName, cityName, cisp].filter(Boolean).filter((v) => v !== "Unknown").join(" ") || "-";
 			return { ip, addr };
 		}),
 	},
 	{
-		name: "腾讯新闻",
-		ipId: "ip-tencent-ip",
-		addrId: "ip-tencent-addr",
+		name: "tencent",
 		fetch: safeFetch("腾讯新闻", async () => {
 			// 腾讯新闻使用JSONP，直接在主线程处理
 			const result = await new Promise((resolve, reject) => {
@@ -136,9 +131,7 @@ const IP_SERVICES = [
 		}),
 	},
 	{
-		name: "speedtest.cn",
-		ipId: "ip-speedtest-ip",
-		addrId: "ip-speedtest-addr",
+		name: "speedtest",
 		fetch: safeFetch("speedtest.cn", async () => {
 			const response = await fetchJson("https://api-v3.speedtest.cn/ip");
 			const { code, data } = response;
@@ -149,9 +142,7 @@ const IP_SERVICES = [
 		}),
 	},
 	{
-		name: "Cloudflare",
-		ipId: "ip-cloudflare-ip",
-		addrId: "ip-cloudflare-addr",
+		name: "cloudflare",
 		fetch: safeFetch("Cloudflare", async () => {
 			const response = await fetch("https://cloudflare.com/cdn-cgi/trace", {
 				referrerPolicy: "no-referrer",
@@ -172,9 +163,7 @@ const IP_SERVICES = [
 		}),
 	},
 	{
-		name: "IP.SB",
-		ipId: "ip-ipsb-ip",
-		addrId: "ip-ipsb-addr",
+		name: "ipsb",
 		fetch: safeFetch("IP.SB", async () => {
 			const data = await fetchJson("https://api.ip.sb/geoip");
 			const { ip = "-", country, region, city } = data;
@@ -183,9 +172,7 @@ const IP_SERVICES = [
 		}),
 	},
 	{
-		name: "ip-api.com",
-		ipId: "ip-ipapi-ip",
-		addrId: "ip-ipapi-addr",
+		name: "ipapi",
 		fetch: safeFetch("ip-api.com", async () => {
 			const data = await fetchJson("https://pro.ip-api.com/json/?fields=16985625&key=EEKS6bLi6D91G1p");
 			const { query: ip = "-", country, regionName, city } = data;
@@ -194,9 +181,7 @@ const IP_SERVICES = [
 		}),
 	},
 	{
-		name: "IPInfo.io",
-		ipId: "ip-ipinfo-ip",
-		addrId: "ip-ipinfo-addr",
+		name: "ipinfo",
 		fetch: safeFetch("IPInfo.io", async () => {
 			const data = await fetchJson("https://ipinfo.io/json?token=41c48b54f6d78f");
 			const { ip = "-", country, region, city } = data;
@@ -210,8 +195,9 @@ const IP_SERVICES = [
 const fillResult = (service, ip, addr) => {
 	const { displayIP, displayAddr } = applyPrivacySettings(service, ip, addr);
 
-	const ipCell = document.getElementById(service.ipId);
-	const addrCell = document.getElementById(service.addrId);
+	const { ipID, addrID } = serviceElementIDs(service);
+	const ipCell = document.getElementById(ipID);
+	const addrCell = document.getElementById(addrID);
 	if (ipCell) ipCell.textContent = displayIP;
 	if (addrCell) addrCell.textContent = displayAddr;
 };
@@ -233,8 +219,9 @@ const fetchIpData = async () => {
 // 更新所有IP显示
 const updateAllDisplays = () => {
 	for (const service of IP_SERVICES) {
-		const ipCell = document.getElementById(service.ipId);
-		const addrCell = document.getElementById(service.addrId);
+		const { ipID, addrID } = serviceElementIDs(service);
+		const ipCell = document.getElementById(ipID);
+		const addrCell = document.getElementById(addrID);
 		if (ipCell && addrCell) {
 			const originalIP = ipCell.dataset.originalIp || ipCell.textContent;
 			const originalAddr = addrCell.dataset.originalAddr || addrCell.textContent;
@@ -297,10 +284,18 @@ const initTooltip = () => {
 	}
 };
 
+const serviceElementIDs = (service) => {
+	return {
+		ipID: `ip-${service.name}-ip`,
+		addrID: `ip-${service.name}-addr`,
+	};
+};
+
 // 存储原始数据
 const storeOriginalData = (service, ip, addr) => {
-	const ipCell = document.getElementById(service.ipId);
-	const addrCell = document.getElementById(service.addrId);
+	const { ipID, addrID } = serviceElementIDs(service);
+	const ipCell = document.getElementById(ipID);
+	const addrCell = document.getElementById(addrID);
 	if (ipCell) ipCell.dataset.originalIp = ip;
 	if (addrCell) addrCell.dataset.originalAddr = addr;
 };
