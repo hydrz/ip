@@ -9,64 +9,73 @@
 - **CDN 命中节点测试**：检测多个 CDN 提供商的命中节点，返回节点信息或位置。
 - **DNS 出口查询**：分析 DNS 出口信息，包括服务商、运营商、IP 和位置，支持多服务聚合。
 
+![项目界面截图](screenshot.png)
+
+*图：项目主界面，展示 IP 查询、连通性测试和 CDN 结果。*
+
 ## 技术栈
 
 - **前端**：HTML5、CSS3、JavaScript (ES6+)
 - **部署**：Cloudflare Workers
-- **工具**：Wrangler (Cloudflare CLI)、Biome (代码格式化)
+- **工具**：Wrangler (Cloudflare CLI)、Biome (代码格式化)、Vite (构建工具)
 - **API**：使用第三方 IP 查询服务和 CDN 测试端点，支持 JSONP 和 CORS
+- **依赖**：Node.js >= 18, pnpm
 
 ## 支持的服务商
 
 ### IP 地址查询
 
-| 服务商     |
-| ---------- |
-| itdog      |
-| edgeone    |
-| tencent    |
-| speedtest  |
-| cloudflare |
-| ipsb       |
-| ipapi      |
-| ipinfo     |
+| 服务商     | 类型 | 描述 |
+| ---------- | ---- | ---- |
+| itdog      | 国内 | 基于 itdog.cn API |
+| edgeone    | 国内 | 基于 EdgeOne 服务 |
+| tencent    | 国内 | 基于腾讯新闻 API |
+| speedtest  | 国内 | 基于 speedtest.cn |
+| cloudflare | 国外 | 基于 Cloudflare trace |
+| ipsb       | 国外 | 基于 IP.SB API |
+| ipapi      | 国外 | 基于 ip-api.com |
+| ipinfo     | 国外 | 基于 IPInfo.io |
 
 ### CDN 命中节点测试
 
-| 服务商              |
-| ------------------- |
-| Cloudflare          |
-| Fastly              |
-| EdgeOne             |
-| jsDelivr            |
-| AWS CloudFront      |
-| Bunny Standard      |
-| Bunny Volume        |
-| CDN77               |
-| G-Core Labs         |
-| Virtuozzo (CDN.net) |
-| OVH CDN             |
-| CacheFly            |
-| Medianova           |
-| Zenlayer            |
-| Melbicom            |
+| 服务商              | 描述 |
+| ------------------- | ---- |
+| Cloudflare          | 检测 CF-RAY 节点 |
+| Fastly              | 检测 x-served-by 头 |
+| EdgeOne             | 检测 EdgeOne 节点 |
+| jsDelivr            | 检测 Server 头 |
+| AWS CloudFront      | 检测 x-amz-cf-pop |
+| Bunny Standard      | 检测 Server 头 |
+| Bunny Volume        | 检测 Server 头 |
+| CDN77               | 检测 x-77-pop |
+| G-Core Labs         | 检测 x-id 头 |
+| Virtuozzo (CDN.net) | 检测 x-edge-location |
+| OVH CDN             | 检测 x-cdn-pop |
+| CacheFly            | 检测 x-cf1 |
+| Medianova           | 检测 x-edge-location |
+| Zenlayer            | 检测 via 头 |
+| Melbicom            | 检测 x-swifty-node |
 
 ### DNS 出口查询
 
-| 服务商    |
-| --------- |
-| Fastly    |
-| IPAPI     |
-| Surfshark |
+| 服务商    | 描述 |
+| --------- | ---- |
+| Fastly    | 基于 fastly-analytics.com |
+| IPAPI     | 基于 ip-api.com EDNS |
+| Surfshark | 基于 surfsharkdns.com |
 
 ### 网络连通性测试
 
-| 服务商     |
-| ---------- |
-| 百度搜索   |
-| 网易云音乐 |
-| GitHub     |
-| YouTube    |
+| 服务商     | 类型 | 描述 |
+| ---------- | ---- | ---- |
+| 百度搜索   | 国内 | 测试 www.baidu.com |
+| 网易云音乐 | 国内 | 测试 music.163.com |
+| 抖音       | 国内 | 测试 www.douyin.com |
+| 腾讯视频   | 国内 | 测试 v.qq.com |
+| GitHub     | 国外 | 测试 github.com |
+| YouTube    | 国外 | 测试 www.youtube.com |
+| TikTok     | 国外 | 测试 www.tiktok.com |
+| Netflix    | 国外 | 测试 www.netflix.com |
 
 ## 安装与部署
 
@@ -133,7 +142,7 @@ ip/
 
 ## 许可证
 
-本项目采用 MIT 许可证。详情请见 [LICENSE](./LICENSE) 文件。
+本项目采用 MIT 许可证。详情请见 [LICENSE](LICENSE) 文件。
 
 ## 致谢
 
