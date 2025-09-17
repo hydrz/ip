@@ -1,7 +1,4 @@
-// DNS 出口查询
-// 此模块负责查询多个DNS服务以获取DNS出口信息
-
-// 常量定义
+// DNS egress query
 const MAX_DNS_RESULTS = 8;
 const UPDATE_DELAY_MS = 100;
 const REQUEST_DELAY_MS = 200;
@@ -60,171 +57,94 @@ const DNS_SERVICES = [
 	},
 ];
 
-// 生成随机字符串用于URL参数
-function generateRandomId(length = 15) {
-	return Math.random()
+// Generate random ID
+const generateRandomId = (length = 15) =>
+	Math.random()
 		.toString(36)
 		.slice(2, 2 + length);
-}
 
-// 获取单个DNS服务的出口信息
-async function fetchDNSInfo(service) {
-	try {
-		const timestamp = Date.now();
-		const random = generateRandomId();
-
-		let url;
-		if (service.name === "Surfshark") {
-			// Surfshark 使用不同的URL格式
-			url = service.url(random);
-		} else {
-			// 其他服务使用时间戳和随机字符串
-			url = service.url(timestamp, random);
+// Fetch DNS info with retries
+const fetchDNSInfo = async (service, retries = 3) => {
+	for (let attempt = 1; attempt <= retries; attempt++) {
+		try {
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 5000);
+			const timestamp = Date.now();
+			const random = generateRandomId();
+			const url = service.name === "Surfshark" ? service.url(random) : service.url(timestamp, random);
+			const response = await fetch(url, {
+				signal: controller.signal,
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			clearTimeout(timeoutId);
+			if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+			const data = await response.json();
+			const result = service.parse(data);
+			if (!result) console.warn(`${service.name} returned unparseable data`);
+			return result;
+		} catch (error) {
+			console.error(`Failed to fetch DNS from ${service.name}:`, error.message);
+			if (attempt === retries) return null;
+			await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 		}
-
-		// 使用直接fetch请求
-		const response = await fetch(url, {
-			referrerPolicy: "no-referrer",
-			credentials: "omit",
-		});
-
-		if (!response.ok) {
-			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-		}
-
-		const contentType = response.headers.get("content-type");
-		let data;
-		if (contentType?.includes("application/json")) {
-			data = await response.json();
-		} else {
-			data = await response.text();
-		}
-
-		const result = service.parse(data);
-
-		if (!result) {
-			console.warn(`${service.name} 返回的数据无法解析`);
-		}
-
-		return result;
-	} catch (error) {
-		if (error.name === "AbortError") {
-			console.error(`${service.name} 请求超时`);
-		} else {
-			console.error(`从 ${service.name} 获取DNS信息失败:`, error.message);
-		}
-		return null;
 	}
-}
+};
 
-// 更新DNS列表显示
-function updateDNSList(dnsData) {
+// Update DNS list with fragment
+const updateDNSList = (dnsData) => {
 	const dnsDataElement = document.getElementById("dns-data");
 	if (!dnsDataElement) return;
-
-	// 使用DocumentFragment进行批量DOM更新，提高性能
 	const fragment = document.createDocumentFragment();
-
-	// 添加新的DNS条目
 	dnsData.forEach(({ ip, provider, isp, location }) => {
 		const rowDiv = document.createElement("div");
 		rowDiv.className = "table-row dns-row";
-
-		// Provider列
-		const providerDiv = document.createElement("div");
-		providerDiv.className = "table-cell text-title";
-		providerDiv.textContent = provider;
-
-		// ISP列
-		const ispDiv = document.createElement("div");
-		ispDiv.className = "table-cell text-meta";
-		ispDiv.title = isp || "Unknown ISP"; // 添加完整文本的tooltip
-		ispDiv.textContent = isp || "Unknown ISP";
-
-		// IP列
-		const ipDiv = document.createElement("div");
-		ipDiv.className = "table-cell text-content";
-		ipDiv.textContent = ip;
-
-		// Location列
-		const locationDiv = document.createElement("div");
-		locationDiv.className = "table-cell text-meta";
-		locationDiv.title = location || "Unknown Location"; // 添加完整文本的tooltip
-		locationDiv.textContent = location || "Unknown Location";
-
-		rowDiv.appendChild(providerDiv);
-		rowDiv.appendChild(ispDiv);
-		rowDiv.appendChild(ipDiv);
-		rowDiv.appendChild(locationDiv);
-
+		const cells = [
+			{ class: "table-cell text-title", text: provider },
+			{ class: "table-cell text-meta", text: isp || "Unknown ISP", title: isp || "Unknown ISP" },
+			{ class: "table-cell text-content", text: ip },
+			{ class: "table-cell text-meta", text: location || "Unknown Location", title: location || "Unknown Location" },
+		];
+		cells.forEach(({ class: cls, text, title }) => {
+			const div = document.createElement("div");
+			div.className = cls;
+			div.textContent = text;
+			if (title) div.title = title;
+			rowDiv.appendChild(div);
+		});
 		fragment.appendChild(rowDiv);
 	});
-
-	// 清空现有内容并一次性更新DOM
 	dnsDataElement.innerHTML = "";
 	dnsDataElement.appendChild(fragment);
-}
+};
 
-// 运行DNS查询的主函数
-async function runDNSQueries() {
+// Run DNS queries
+const runDNSQueries = async () => {
 	const dnsData = [];
-	const maxResults = MAX_DNS_RESULTS;
-
-	// 用于避免过于频繁的DOM更新
 	let updateTimer = null;
-
 	const updateDisplay = () => {
 		if (updateTimer) clearTimeout(updateTimer);
-		updateTimer = setTimeout(() => {
-			updateDNSList([...dnsData]);
-		}, UPDATE_DELAY_MS); // 延迟更新以避免过于频繁的DOM更新
+		updateTimer = setTimeout(() => updateDNSList([...dnsData]), UPDATE_DELAY_MS);
 	};
-
-	// 并发运行所有DNS服务查询
 	const promises = DNS_SERVICES.map(async (service) => {
 		let attempts = 0;
 		const maxAttempts = service.name === "AliYun" ? MAX_ATTEMPTS_ALIYUN : MAX_ATTEMPTS_DEFAULT;
-
-		while (attempts < maxAttempts && dnsData.length < maxResults) {
+		while (attempts < maxAttempts && dnsData.length < MAX_DNS_RESULTS) {
 			const result = await fetchDNSInfo(service);
 			if (result) {
-				let addedNew = false;
-				if (Array.isArray(result)) {
-					// Surfshark 返回数组
-					for (const item of result) {
-						if (dnsData.length < maxResults && !dnsData.some((d) => d.ip === item.ip)) {
-							dnsData.push(item);
-							addedNew = true;
-						}
-					}
-				} else {
-					// 其他服务返回单个对象
-					if (result && !dnsData.some((d) => d.ip === result.ip)) {
-						dnsData.push(result);
-						addedNew = true;
-					}
-				}
-
-				// 如果添加了新数据，立即更新显示
-				if (addedNew) {
-					updateDisplay();
-				}
+				const added = Array.isArray(result)
+					? result.filter((item) => !dnsData.some((d) => d.ip === item.ip))
+					: [result].filter((item) => !dnsData.some((d) => d.ip === item.ip));
+				dnsData.push(...added);
+				if (added.length > 0) updateDisplay();
 			}
 			attempts++;
-
-			// 小延迟避免过于频繁的请求
 			await new Promise((resolve) => setTimeout(resolve, REQUEST_DELAY_MS));
 		}
 	});
-
 	await Promise.all(promises);
-
-	// 确保最终更新
-	if (updateTimer) {
-		clearTimeout(updateTimer);
-	}
+	if (updateTimer) clearTimeout(updateTimer);
 	updateDNSList(dnsData);
-}
+};
 
-// 页面加载完成后运行DNS查询
 window.addEventListener("DOMContentLoaded", runDNSQueries);

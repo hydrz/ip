@@ -1,4 +1,4 @@
-// CDN 命中节点测试
+// CDN hit node test
 const CDN_TESTS = [
 	{
 		id: "cdn-cloudflare-hit",
@@ -36,14 +36,17 @@ const CDN_TESTS = [
 		id: "cdn-edge-hit",
 		name: "EdgeOne",
 		fetch: async () => {
-			const response = await fetch('https://edge.hydrz.cn/cdn-cgi/trace');
+			const response = await fetch("https://edge.hydrz.cn/cdn-cgi/trace");
 			const text = await response.text();
-			const [loc, colo] = text.split('\n').reduce((acc, line) => {
-				const [key, value] = line.split('=');
-				if (key === 'loc') acc[0] = value;
-				if (key === 'colo') acc[1] = value;
-				return acc;
-			}, ['', '']);
+			const [loc, colo] = text.split("\n").reduce(
+				(acc, line) => {
+					const [key, value] = line.split("=");
+					if (key === "loc") acc[0] = value;
+					if (key === "colo") acc[1] = value;
+					return acc;
+				},
+				["", ""],
+			);
 			return `${loc}->CF-${colo}`;
 		},
 	},
@@ -247,24 +250,27 @@ const CDN_TESTS = [
 	},
 ];
 
-// 运行CDN测试
-async function runCDNTests() {
-	for (const test of CDN_TESTS) {
-		try {
-			const text = await test.fetch();
-			const element = document.getElementById(test.id);
-			if (element) {
-				element.textContent = text;
-			}
-		} catch (error) {
-			console.error(`Failed to test ${test.name}:`, error);
-			const element = document.getElementById(test.id);
-			if (element) {
-				element.textContent = "获取失败";
+// Run CDN tests with retries
+const runCDNTests = async () => {
+	const promises = CDN_TESTS.map(async (test) => {
+		let result = "获取失败";
+		for (let attempt = 1; attempt <= 3; attempt++) {
+			try {
+				const controller = new AbortController();
+				const timeoutId = setTimeout(() => controller.abort(), 3000);
+				result = await test.fetch();
+				clearTimeout(timeoutId);
+				break;
+			} catch (error) {
+				console.error(`Failed to test ${test.name} on attempt ${attempt}:`, error.message);
+				if (attempt === 3) result = "网络错误，请重试";
+				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 			}
 		}
-	}
-}
+		const element = document.getElementById(test.id);
+		if (element) element.textContent = result;
+	});
+	await Promise.all(promises);
+};
 
-// 页面加载完成后运行测试
 window.addEventListener("DOMContentLoaded", runCDNTests);

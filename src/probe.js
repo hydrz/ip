@@ -1,4 +1,4 @@
-// 网络连通性检查
+// Network connectivity check
 const PROBE_SERVICES = [
 	{
 		name: "百度搜索",
@@ -22,78 +22,71 @@ const PROBE_SERVICES = [
 	},
 ];
 
-// 测试连接延迟
-async function testLatency(domain) {
-	try {
-		const startTime = performance.now();
-		await fetch(`https://${domain}/favicon.ico`, {
-			method: "HEAD",
-			mode: "no-cors",
-			cache: "no-cache",
-		});
-		const latency = performance.now() - startTime;
-		return Math.round(latency);
-	} catch (error) {
-		console.error(`Failed to test latency for ${domain}:`, error);
-		return null;
-	}
-}
-
-// 运行多次测试并计算平均值
-async function runMultipleTests(domain, count = 10) {
-	const results = [];
-	for (let i = 0; i < count; i++) {
-		const latency = await testLatency(domain);
-		if (latency !== null) {
-			results.push(latency);
+// Test connection latency with retries
+const testLatency = async (domain, retries = 3) => {
+	for (let attempt = 1; attempt <= retries; attempt++) {
+		try {
+			const startTime = performance.now();
+			await fetch(`https://${domain}/favicon.ico`, {
+				method: "HEAD",
+				mode: "no-cors",
+				cache: "no-cache",
+			});
+			const latency = performance.now() - startTime;
+			return Math.round(latency);
+		} catch (error) {
+			if (attempt === retries) {
+				console.error(`testLatency for ${domain} failed:`, error.message);
+				return null;
+			}
+			await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 		}
-		// 小延迟避免过于频繁的请求
-		await new Promise((resolve) => setTimeout(resolve, 100));
 	}
+};
 
+// Run multiple tests and calculate average
+const runMultipleTests = async (domain, count = 10) => {
+	const promises = Array.from({ length: count }, () => testLatency(domain));
+	const results = (await Promise.all(promises)).filter((latency) => latency !== null);
 	if (results.length === 0) {
 		return null;
 	}
-
-	// 计算平均值
 	const average = results.reduce((sum, latency) => sum + latency, 0) / results.length;
 	return Math.round(average);
-}
+};
 
-// 更新显示结果
-function updateProbeResult(elementId, latency) {
+// Update display result with cached element
+const updateProbeResult = (elementId, latency) => {
 	const element = document.getElementById(elementId);
-	if (element) {
-		if (latency === null) {
-			element.className = "text-content text-error";
-			element.textContent = "超时";
-			return;
-		}
+	if (!element) return;
 
-		element.textContent = `${latency}ms`;
-
-		if (latency < 100) {
-			element.className = "text-content text-success";
-		} else if (latency < 300) {
-			element.className = "text-content text-warning";
-		} else {
-			element.className = "text-content text-error";
-		}
+	if (latency === null) {
+		element.className = "text-content text-error";
+		element.textContent = "超时";
+		return;
 	}
-}
 
-// 运行所有连通性测试
-async function runConnectivityTests() {
+	element.textContent = `${latency}ms`;
+	element.className =
+		latency < 100
+			? "text-content text-success"
+			: latency < 300
+				? "text-content text-warning"
+				: "text-content text-error";
+};
+
+// Run all connectivity tests
+const runConnectivityTests = async () => {
 	for (const service of PROBE_SERVICES) {
 		try {
 			const latency = await runMultipleTests(service.domain);
 			updateProbeResult(service.elementId, latency);
 		} catch (error) {
-			console.error(`Failed to test ${service.name}:`, error);
+			console.warn(`Connectivity test failed for ${service.name}:`, error.message);
 			updateProbeResult(service.elementId, null);
 		}
 	}
-}
+};
 
-// 页面加载完成后运行测试
+// Run tests on page load
 window.addEventListener("DOMContentLoaded", runConnectivityTests);

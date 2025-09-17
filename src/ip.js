@@ -1,78 +1,63 @@
-// 常量配置
+// Constants
 const DOMESTIC_SERVICES = ["itdog.cn", "IPIP.net", "腾讯新闻", "speedtest.cn"];
-
 const CITIES = ["北京市", "上海市", "广州市", "深圳市", "杭州市", "成都市", "武汉市", "南京市"];
-
 const PROVINCES = ["北京", "上海", "广东", "浙江", "四川", "湖北", "江苏"];
-
 const JSONP_TIMEOUT = 10000;
 
-// 隐藏状态管理
+// Privacy settings
 let hideIP = false;
 let hideDomesticGeo = false;
 let hideAllGeo = false;
 
-// 工具函数
+// Utility functions
 const isDomesticService = (serviceName) => DOMESTIC_SERVICES.includes(serviceName);
-
 const generateRandomIP = () => Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join(".");
-
 const generateRandomAddress = () => {
 	const randomCity = CITIES[Math.floor(Math.random() * CITIES.length)];
 	const randomProvince = PROVINCES[Math.floor(Math.random() * PROVINCES.length)];
 	return `${randomProvince} ${randomCity}`;
 };
 
-// 创建安全的fetch包装器
-const safeFetch = (serviceName, fetchFn) => async () => {
-	try {
-		return await fetchFn();
-	} catch (error) {
-		console.error(`${serviceName} fetch error:`, error);
-		return { ip: "获取失败", addr: "" };
-	}
-};
+// Safe fetch wrapper with retries
+const safeFetch =
+	(serviceName, fetchFn, retries = 3) =>
+	async () => {
+		for (let attempt = 1; attempt <= retries; attempt++) {
+			try {
+				return await fetchFn();
+			} catch (error) {
+				console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
+				if (attempt === retries) {
+					return { ip: "获取失败", addr: "" };
+				}
+				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+			}
+		}
+	};
 
-// 通用fetch函数
+// Fetch JSON with error handling
 const fetchJson = async (url) => {
 	const response = await fetch(url, {
 		referrerPolicy: "no-referrer",
 		credentials: "omit",
 	});
-
 	if (!response.ok) {
 		throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 	}
-
 	const contentType = response.headers.get("content-type");
-	if (contentType?.includes("application/json")) {
-		return await response.json();
-	} else {
-		return await response.text();
-	}
+	return contentType?.includes("application/json") ? await response.json() : await response.text();
 };
 
-// 应用隐藏设置
+// Apply privacy settings
 const applyPrivacySettings = (service, originalIP, originalAddr) => {
 	let displayIP = originalIP;
 	let displayAddr = originalAddr;
-
-	// 隐藏IP
-	if (hideIP) {
-		displayIP = generateRandomIP();
-	}
-
-	// 隐藏地理位置
-	if (hideAllGeo) {
-		displayAddr = generateRandomAddress();
-	} else if (hideDomesticGeo && isDomesticService(service.name)) {
-		displayAddr = generateRandomAddress();
-	}
-
+	if (hideIP) displayIP = generateRandomIP();
+	if (hideAllGeo || (hideDomesticGeo && isDomesticService(service.name))) displayAddr = generateRandomAddress();
 	return { displayIP, displayAddr };
 };
 
-// IP 服务列表
+// IP services list
 const IP_SERVICES = [
 	{
 		name: "itdog",
@@ -87,7 +72,11 @@ const IP_SERVICES = [
 		fetch: safeFetch("edgeone.run", async () => {
 			const data = await fetchJson("https://functions-geolocation.edgeone.run/geo");
 			const { eo: { geo: { countryName, regionName, cityName, cisp } = {}, clientIp: ip = "-" } = {} } = data || {};
-			const addr = [countryName, regionName, cityName, cisp].filter(Boolean).filter((v) => v !== "Unknown").join(" ") || "-";
+			const addr =
+				[countryName, regionName, cityName, cisp]
+					.filter(Boolean)
+					.filter((v) => v !== "Unknown")
+					.join(" ") || "-";
 			return { ip, addr };
 		}),
 	},
@@ -191,10 +180,9 @@ const IP_SERVICES = [
 	},
 ];
 
-// 填充 IP 和地址
+// Fill result with privacy applied
 const fillResult = (service, ip, addr) => {
 	const { displayIP, displayAddr } = applyPrivacySettings(service, ip, addr);
-
 	const { ipID, addrID } = serviceElementIDs(service);
 	const ipCell = document.getElementById(ipID);
 	const addrCell = document.getElementById(addrID);
@@ -202,21 +190,25 @@ const fillResult = (service, ip, addr) => {
 	if (addrCell) addrCell.textContent = displayAddr;
 };
 
-// 获取 IP 和地址并填充
+// Fetch IP data
 const fetchIpData = async () => {
-	for (const service of IP_SERVICES) {
+	const promises = IP_SERVICES.map(async (service) => {
 		try {
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 5000);
 			const { ip, addr } = await service.fetch();
+			clearTimeout(timeoutId);
 			storeOriginalData(service, ip, addr);
 			fillResult(service, ip, addr);
 		} catch (error) {
-			// safeFetch已经处理了错误，这里不需要额外处理
-			console.error(`Unexpected error for ${service.name}:`, error);
+			console.error(`Unexpected error for ${service.name}:`, error.message);
+			fillResult(service, "网络错误，请重试", "");
 		}
-	}
+	});
+	await Promise.all(promises);
 };
 
-// 更新所有IP显示
+// Update all displays
 const updateAllDisplays = () => {
 	for (const service of IP_SERVICES) {
 		const { ipID, addrID } = serviceElementIDs(service);
@@ -232,7 +224,7 @@ const updateAllDisplays = () => {
 	}
 };
 
-// 初始化开关事件监听器
+// Initialize toggle listeners
 const initToggleListeners = () => {
 	const toggles = [
 		{
@@ -254,7 +246,6 @@ const initToggleListeners = () => {
 			},
 		},
 	];
-
 	toggles.forEach(({ id, handler }) => {
 		const toggle = document.getElementById(id);
 		if (toggle) {
@@ -266,17 +257,15 @@ const initToggleListeners = () => {
 	});
 };
 
-// 初始化 tooltip
+// Initialize tooltip
 const initTooltip = () => {
 	const tooltipTrigger = document.querySelector('[data-tooltip-target="tooltip-default"]');
 	const tooltip = document.getElementById("tooltip-default");
-
 	if (tooltipTrigger && tooltip) {
 		tooltipTrigger.addEventListener("mouseenter", () => {
 			tooltip.classList.remove("invisible", "opacity-0");
 			tooltip.classList.add("opacity-100");
 		});
-
 		tooltipTrigger.addEventListener("mouseleave", () => {
 			tooltip.classList.add("invisible", "opacity-0");
 			tooltip.classList.remove("opacity-100");
@@ -284,14 +273,11 @@ const initTooltip = () => {
 	}
 };
 
-const serviceElementIDs = (service) => {
-	return {
-		ipID: `ip-${service.name}-ip`,
-		addrID: `ip-${service.name}-addr`,
-	};
-};
+const serviceElementIDs = (service) => ({
+	ipID: `ip-${service.name}-ip`,
+	addrID: `ip-${service.name}-addr`,
+});
 
-// 存储原始数据
 const storeOriginalData = (service, ip, addr) => {
 	const { ipID, addrID } = serviceElementIDs(service);
 	const ipCell = document.getElementById(ipID);
