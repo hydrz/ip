@@ -3,21 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      查看我的IP地址 | 查询本机IP地址及归属地 | 查看DNS出口IP | 查看递归DNS信息 | 测试CDN命中节点 | IP Address Lookup | What is my IP
-      address
-    </title>
+    <title>查看我的IP地址 — 免费IP查询、DNS出口与CDN检测 | hydrz</title>
     <meta
       name="description"
-      content="查看我的IP地址，查询本机IP地址及归属地，查看DNS出口IP，查看递归DNS信息，测试CDN命中节点。免费在线IP查询工具，支持IPv4/IPv6地理位置查询、网络连通性测试、CDN节点检测和DNS出口查询。IP Address Lookup, What is my IP address, What is my DNS, DNSLeaks, GeoIP API。"
+      content="免费在线IP工具，实时显示本机 IPv4/IPv6 地址与精确归属地，检测 DNS 出口与递归解析信息，测试多家 CDN 命中节点并进行网络连通性与延迟检测。提供隐私保护开关以截图隐藏敏感信息，适合网络排查与安全审计。"
     />
+    <meta name="keywords" content="IP地址,IP查询,查看IP,IPv4,IPv6,DNS出口,递归DNS,CDN检测,网络连通性,隐私保护" />
+    <!-- Open Graph / Social preview -->
+    <meta property="og:title" content="查看我的IP地址 — 免费IP查询、DNS出口与CDN检测 | hydrz" />
     <meta
-      name="keywords"
-      content="查看我的IP地址,查询本机IP地址及归属地,查看DNS出口IP,查看递归DNS信息,测试CDN命中节点,IP查询,IP地址查询,IPv4,IPv6,地理位置查询,网络测试,CDN检测,DNS查询,在线工具,IP Address Lookup,What is my IP address,What is my DNS,DNSLeaks,GeoIP API"
+      property="og:description"
+      content="免费在线IP工具：显示 IPv4/IPv6 与归属地，检测 DNS 出口与 CDN 命中，支持隐私保护开关，便于网络排查与安全审计。"
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ip.hydrz.cn/" />
+    <meta property="og:site_name" content="hydrz IP 工具" />
+    <meta property="og:image" content="https://ip.hydrz.cn/og-image.png" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@hydrz" />
+    <meta name="twitter:title" content="查看我的IP地址 — 免费IP查询、DNS出口与CDN检测 | hydrz" />
+    <meta name="twitter:description" content="免费在线IP工具：显示 IPv4/IPv6 与归属地，检测 DNS 出口与 CDN 命中，支持隐私保护开关。" />
+    <meta name="twitter:image" content="https://ip.hydrz.cn/og-image.png" />
+    <!-- Structured data: Website schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "hydrz IP 工具",
+        "url": "https://ip.hydrz.cn/",
+        "description": "免费在线IP工具：显示本机 IPv4/IPv6 与归属地，检测 DNS 出口与 CDN 命中，支持隐私保护开关。"
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="author" content="hydrz" />
     <meta name="robots" content="index, follow" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href="https://ip.hydrz.cn/" />
     <link rel="stylesheet" href="./src/style.css" />
     <style>
@@ -27,11 +47,11 @@
       }
 
       .ip-row .table-cell:nth-child(2) {
-        flex: 1.5; /* Make the third cell take more space */
+        flex: 1.5;
       }
 
       .ip-row .table-cell:nth-child(3) {
-        flex: 2; /* Make the third cell take more space */
+        flex: 2;
       }
 
       .controls {
@@ -39,7 +59,7 @@
         justify-content: space-between;
         align-items: center;
         margin-top: var(--spacing-md);
-        padding: var(--spacing-lg); /* Increased padding */
+        padding: var(--spacing-lg);
         background-color: var(--color-surface);
         border-radius: var(--border-radius);
         border: 1px solid var(--color-border);
@@ -55,12 +75,12 @@
       .controls-ip {
         display: flex;
         align-items: center;
-        gap: var(--spacing-lg); /* Increased gap */
+        gap: var(--spacing-lg);
         flex-wrap: wrap;
       }
 
       .dns-row .table-cell:nth-child(1) {
-        flex: 2; /* Make the first cell take more space */
+        flex: 2;
       }
 
       @media (max-width: 768px) {
