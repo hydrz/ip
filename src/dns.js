@@ -99,25 +99,34 @@ const updateDNSList = (dnsData) => {
 	dnsData.forEach(({ ip, provider, isp, location }) => {
 		const rowDiv = document.createElement("div");
 		rowDiv.className = "table-row dns-row";
-		const cells = [
-			{ label: "服务商", class: "table-cell text-title", text: provider },
-			{ label: "运营商", class: "table-cell text-meta", text: isp || "Unknown ISP", title: isp || "Unknown ISP" },
-			{ label: "IP地址", class: "table-cell text-content", text: ip },
-			{
-				label: "位置",
-				class: "table-cell text-meta",
-				text: location || "Unknown Location",
-				title: location || "Unknown Location",
-			},
-		];
-		cells.forEach(({ label, class: cls, text, title }) => {
-			const div = document.createElement("div");
-			div.setAttribute("data-label", label);
-			div.className = cls;
-			div.textContent = text;
-			if (title) div.title = title;
-			rowDiv.appendChild(div);
-		});
+
+		const providerDiv = document.createElement("div");
+		providerDiv.setAttribute("data-label", "服务商");
+		providerDiv.className = "table-cell text-title";
+		providerDiv.textContent = provider;
+		const ispSpan = document.createElement("span");
+		ispSpan.className = "text-subtitle";
+		ispSpan.textContent = ` ${isp?.trim() || "Unknown ISP"}`;
+		providerDiv.appendChild(ispSpan);
+		providerDiv.title = `${provider} - ${isp?.trim() || "Unknown ISP"}`;
+
+		rowDiv.appendChild(providerDiv);
+
+
+		const ipDiv = document.createElement("div");
+		ipDiv.setAttribute("data-label", "IP地址");
+		ipDiv.className = "table-cell text-mono";
+		ipDiv.textContent = ip;
+		ipDiv.title = ip;
+		rowDiv.appendChild(ipDiv);
+
+		const locationDiv = document.createElement("div");
+		locationDiv.setAttribute("data-label", "位置");
+		locationDiv.className = "table-cell text-meta";
+		locationDiv.textContent = location || "Unknown Location";
+		locationDiv.title = location || "Unknown Location";
+		rowDiv.appendChild(locationDiv);
+
 		fragment.appendChild(rowDiv);
 	});
 	dnsDataElement.innerHTML = "";

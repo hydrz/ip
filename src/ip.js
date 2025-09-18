@@ -57,17 +57,17 @@ const generateRandomAddress = (isDomestic) => {
 // Safe fetch wrapper with retries
 const safeFetch =
 	(serviceName, fetchFn, retries = 3) =>
-	async () => {
-		for (let attempt = 1; attempt <= retries; attempt++) {
-			try {
-				return await fetchFn();
-			} catch (error) {
-				console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
-				if (attempt === retries) return { ip: "获取失败", addr: "" };
-				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+		async () => {
+			for (let attempt = 1; attempt <= retries; attempt++) {
+				try {
+					return await fetchFn();
+				} catch (error) {
+					console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
+					if (attempt === retries) return { ip: "获取失败", addr: "" };
+					await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+				}
 			}
-		}
-	};
+		};
 
 // Fetch JSON with error handling
 const fetchJson = async (url) => {
@@ -204,17 +204,17 @@ const IP_SERVICES = [
 	},
 ];
 
-// Get element IDs for service
-const serviceElementIDs = (service) => ({
-	ipID: `ip-${service.name}-ip`,
-	addrID: `ip-${service.name}-addr`,
+// Get element selectors for service
+const serviceElementSelectors = (service) => ({
+	ipSelector: `.ip-row[data-provider="${service.name}"] [data-label="IP地址"]`,
+	addrSelector: `.ip-row[data-provider="${service.name}"] [data-label="位置"]`,
 });
 
 // Store original data in DOM
 const storeOriginalData = (service, ip, addr) => {
-	const { ipID, addrID } = serviceElementIDs(service);
-	const ipCell = document.getElementById(ipID);
-	const addrCell = document.getElementById(addrID);
+	const { ipSelector, addrSelector } = serviceElementSelectors(service);
+	const ipCell = document.querySelector(ipSelector);
+	const addrCell = document.querySelector(addrSelector);
 	if (ipCell) ipCell.dataset.originalIp = ip;
 	if (addrCell) addrCell.dataset.originalAddr = addr;
 };
@@ -222,9 +222,9 @@ const storeOriginalData = (service, ip, addr) => {
 // Fill result with privacy applied
 const fillResult = (service, ip, addr) => {
 	const { displayIP, displayAddr } = applyPrivacySettings(service, ip, addr);
-	const { ipID, addrID } = serviceElementIDs(service);
-	const ipCell = document.getElementById(ipID);
-	const addrCell = document.getElementById(addrID);
+	const { ipSelector, addrSelector } = serviceElementSelectors(service);
+	const ipCell = document.querySelector(ipSelector);
+	const addrCell = document.querySelector(addrSelector);
 	if (ipCell) ipCell.textContent = displayIP;
 	if (addrCell) addrCell.textContent = displayAddr;
 };
@@ -251,9 +251,9 @@ const fetchIpData = async () => {
 // Update all displays
 const updateAllDisplays = () => {
 	IP_SERVICES.forEach((service) => {
-		const { ipID, addrID } = serviceElementIDs(service);
-		const ipCell = document.getElementById(ipID);
-		const addrCell = document.getElementById(addrID);
+		const { ipSelector, addrSelector } = serviceElementSelectors(service);
+		const ipCell = document.querySelector(ipSelector);
+		const addrCell = document.querySelector(addrSelector);
 		if (ipCell && addrCell) {
 			const originalIP = ipCell.dataset.originalIp || ipCell.textContent;
 			const originalAddr = addrCell.dataset.originalAddr || addrCell.textContent;

@@ -23,22 +23,11 @@
     <style>
       .ip-row {
         display: flex;
-      }
-
-      .ip-row .table-cell:nth-child(1) {
-        flex: 0 0 3em;
-      }
-
-      .ip-row .table-cell:nth-child(2) {
-        flex: 1;
+        justify-content: space-between;
       }
 
       .ip-row .table-cell:nth-child(3) {
-        flex: 2;
-      }
-
-      .ip-row .table-cell:nth-child(4) {
-        flex: 2;
+        flex: 2; /* Make the third cell take more space */
       }
 
       .controls {
@@ -66,24 +55,8 @@
         flex-wrap: wrap;
       }
 
-      .dns-row {
-        display: flex;
-      }
-
       .dns-row .table-cell:nth-child(1) {
-        flex: 0 0 3em;
-      }
-
-      .dns-row .table-cell:nth-child(2) {
-        flex: 1;
-      }
-
-      .dns-row .table-cell:nth-child(3) {
-        flex: 1;
-      }
-
-      .dns-row .table-cell:nth-child(4) {
-        flex: 2;
+        flex: 2; /* Make the first cell take more space */
       }
 
       @media (max-width: 768px) {
@@ -116,63 +89,55 @@
                 <div class="sr-only">IP 地址查询结果</div>
                 <div class="table-body">
                   <!-- itdog.cn -->
-                  <div class="table-row ip-row">
-                    <div class="table-cell text-title" data-label="类型">国内</div>
-                    <div class="table-cell text-subtitle" data-label="服务">itdog.cn</div>
-                    <div id="ip-itdog-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div id="ip-itdog-addr" class="table-cell text-meta" data-label="位置">-</div>
+                  <div class="table-row ip-row" data-provider="itdog">
+                    <div class="table-cell text-title">国内 <span class="text-subtitle">itdog.cn</span></div>
+                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
+                    <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
 
                   <!-- edgeone -->
-                  <div class="table-row ip-row">
-                    <div class="table-cell text-title" data-label="类型">国内</div>
-                    <div class="table-cell text-subtitle" data-label="服务">edgeone</div>
-                    <div id="ip-edgeone-ip" class="table-cell text-content" data-label="IP地址">
+                  <div class="table-row ip-row" data-provider="edgeone">
+                    <div class="table-cell text-title">国内 <span class="text-subtitle">edgeone</span></div>
+                    <div class="table-cell text-content" data-label="IP地址">
                       <span class="text-loading">加载中...</span>
                     </div>
-                    <div id="ip-edgeone-addr" class="table-cell text-meta" data-label="位置">-</div>
+                    <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- 腾讯新闻 -->
-                  <div class="table-row ip-row">
-                    <div class="table-cell text-title" data-label="类型">国内</div>
-                    <div class="table-cell text-subtitle" data-label="服务">腾讯新闻</div>
-                    <div id="ip-tencent-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div id="ip-tencent-addr" class="table-cell text-meta" data-label="位置">-</div>
+                  <div class="table-row ip-row" data-provider="tencent">
+                    <div class="table-cell text-title">国内 <span class="text-subtitle">腾讯新闻</span></div>
+                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
+                    <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- speedtest.cn -->
-                  <div class="table-row ip-row">
-                    <div class="table-cell text-title" data-label="类型">国内</div>
-                    <div class="table-cell text-subtitle" data-label="服务">speedtest.cn</div>
-                    <div id="ip-speedtest-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div id="ip-speedtest-addr" class="table-cell text-meta" data-label="位置">-</div>
+                  <div class="table-row ip-row" data-provider="speedtest">
+                    <div class="table-cell text-title">国内 <span class="text-subtitle">speedtest.cn</span></div>
+                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
+                    <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- Cloudflare -->
-                  <div class="table-row ip-row">
-                    <div class="table-cell text-title" data-label="类型">国外</div>
-                    <div class="table-cell text-subtitle" data-label="服务">Cloudflare</div>
-                    <div id="ip-cloudflare-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div id="ip-cloudflare-addr" class="table-cell text-meta" data-label="位置">-</div>
+                  <div class="table-row ip-row" data-provider="cloudflare">
+                    <div class="table-cell text-title">国外 <span class="text-subtitle">Cloudflare</span></div>
+                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
+                    <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- IP.SB -->
-                  <div class="table-row ip-row">
-                    <div class="table-cell text-title" data-label="类型">国外</div>
-                    <div class="table-cell text-subtitle" data-label="服务">IP.SB</div>
-                    <div id="ip-ipsb-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div id="ip-ipsb-addr" class="table-cell text-meta" data-label="位置">-</div>
+                  <div class="table-row ip-row" data-provider="ipsb">
+                    <div class="table-cell text-title">国外 <span class="text-subtitle">IP.SB</span></div>
+                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
+                    <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- ip-api.com -->
-                  <div class="table-row ip-row">
-                    <div class="table-cell text-title" data-label="类型">国外</div>
-                    <div class="table-cell text-subtitle" data-label="服务">ip-api.com</div>
-                    <div id="ip-ipapi-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div id="ip-ipapi-addr" class="table-cell text-meta" data-label="位置">-</div>
+                  <div class="table-row ip-row" data-provider="ipapi">
+                    <div class="table-cell text-title">国外 <span class="text-subtitle">ip-api.com</span></div>
+                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
+                    <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                   <!-- IPInfo.io -->
-                  <div class="table-row ip-row">
-                    <div class="table-cell text-title" data-label="类型">国外</div>
-                    <div class="table-cell text-subtitle" data-label="服务">IPInfo.io</div>
-                    <div id="ip-ipinfo-ip" class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div id="ip-ipinfo-addr" class="table-cell text-meta" data-label="位置">-</div>
+                  <div class="table-row ip-row" data-provider="ipinfo">
+                    <div class="table-cell text-title">国外 <span class="text-subtitle">IPInfo.io</span></div>
+                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
+                    <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
                 </div>
               </div>
@@ -382,12 +347,6 @@
             <h3 class="title">DNS 出口查询</h3>
             <div class="card" tabindex="0">
               <div id="dns-list" class="table">
-                <div class="table-header dns-header dns-row">
-                  <div class="table-cell text-title">服务商</div>
-                  <div class="table-cell text-title">运营商</div>
-                  <div class="table-cell text-title">IP地址</div>
-                  <div class="table-cell text-title">位置</div>
-                </div>
                 <div id="dns-data" class="table-body"></div>
               </div>
             </div>
