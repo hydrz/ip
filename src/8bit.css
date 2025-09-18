@@ -1,31 +1,31 @@
 :root {
-  --color-primary: #2563eb;
-  --color-secondary: #64748b;
-  --color-background: #f3f4f6;
+  /* 8-bit inspired palette and monospace font */
+  --color-primary: #00aaff;
+  --color-secondary: #ffaa00;
+  --color-background: #f8f8f8;
   --color-surface: #ffffff;
-  --color-text: #1e293b;
-  --color-text-secondary: #64748b;
-  --color-border: #dbeafe;
-  --color-shadow: rgba(37, 99, 235, 0.08);
-  --color-success: #22c55e;
-  --color-error: #ef4444;
-  --color-warning: #f59e0b;
-  --color-info: #0ea5e9;
-  --color-focus: #2563eb;
+  --color-text: #0b0b0b;
+  --color-text-secondary: #6b6b6b;
+  --color-border: #000000;
+  --color-shadow: #000000;
+  --color-success: #00cc66;
+  --color-error: #ff3366;
+  --color-warning: #ffd24d;
+  --color-info: #66ccff;
+  --color-focus: #ff00ff;
 
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.25rem;
-  --font-size-xl: 1.5rem;
+  --font-family: "Press Start 2P", "Courier New", monospace;
+  --font-size-xs: 0.6rem;
+  --font-size-sm: 0.75rem;
+  --font-size-md: 0.9rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.125rem;
 
   /* Font weights */
   --font-weight-normal: 400;
   --font-weight-semibold: 600;
 
-  --border-radius: 8px;
+  --border-radius: 0;
   --spacing-xs: 0.5rem;
   --spacing-sm: 0.75rem;
   --spacing-md: 1rem;
@@ -35,19 +35,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-primary: #60a5fa;
-    --color-secondary: #94a3b8;
-    --color-background: #0f172a;
-    --color-surface: #1e293b;
-    --color-text: #f3f4f6;
-    --color-text-secondary: #94a3b8;
-    --color-border: #334155;
-    --color-shadow: rgba(96, 165, 250, 0.15);
-    --color-success: #4ade80;
-    --color-error: #f87171;
-    --color-warning: #fde68a;
-    --color-info: #38bdf8;
-    --color-focus: #60a5fa;
+    /* 8-bit dark variant */
+    --color-primary: #00e6ff;
+    --color-secondary: #ffcc66;
+    --color-background: #0b0b0b;
+    --color-surface: #111111;
+    --color-text: #e6e6e6;
+    --color-text-secondary: #9a9a9a;
+    --color-border: #000000;
+    --color-shadow: #000000;
+    --color-success: #00ff88;
+    --color-error: #ff6b8a;
+    --color-warning: #ffd87a;
+    --color-info: #66e0ff;
+    --color-focus: #ff66ff;
   }
 }
 
@@ -60,6 +61,17 @@ body {
   line-height: 1.6;
   color: var(--color-text);
   background-color: var(--color-background);
+
+  /* Pixel grid background - subtle 8-bit canvas */
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 8px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 8px);
+  background-size: 8px 8px, 8px 8px;
+  background-attachment: fixed;
+
+  /* Use crisp pixel rendering for images/icons */
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
+
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -106,11 +118,12 @@ body {
 
 .card {
   background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md); /* Increased padding for better spacing */
-  box-shadow: 0 8px 24px var(--color-shadow); /* Enhanced shadow for depth */
-  transition: all 0.4s ease; /* Smoother transition */
+  border: 2px solid var(--color-border); /* bold black outline */
+  border-radius: 0; /* remove rounding for pixel look */
+  padding: calc(var(--spacing-md) - 0.25rem);
+  /* Pixel-style hard shadow (no blur) */
+  box-shadow: 6px 6px 0 0 var(--color-shadow);
+  transition: transform 0.12s steps(1), box-shadow 0.12s steps(1);
 }
 
 .card-col {
@@ -119,10 +132,15 @@ body {
   align-items: center;
 }
 
+/* Make icons render pixelated and slightly larger for retro look */
 .card-icon {
   width: auto;
   height: 1em;
   margin-bottom: var(--spacing-sm);
+  image-rendering: pixelated;
+  -webkit-image-rendering: pixelated;
+  -moz-crisp-edges: crisp-edges;
+  filter: none;
 }
 
 .grid {
@@ -133,6 +151,7 @@ body {
   gap: var(--spacing-md);
 }
 
+/* Grid cards: use blocky squares */
 .grid .card {
   flex: 0 0 calc(25% - var(--spacing-sm));
   min-width: calc(25% - var(--spacing-sm));
@@ -140,6 +159,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 @media (max-width: 80rem) {
@@ -277,16 +297,21 @@ body {
 }
 
 .icon {
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
   cursor: pointer;
+  image-rendering: pixelated;
+  -webkit-image-rendering: pixelated;
 }
 
+/* Table styles get pixel borders */
 .table {
   width: 100%;
   border-radius: 0;
   overflow: hidden;
   padding: 0;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
 }
 
 .table-header {
@@ -309,9 +334,9 @@ body {
   display: flex;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-md);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px dashed var(--color-border);
   background-color: transparent;
-  transition: box-shadow 0.3s ease;
+  transition: background-color 0.08s steps(1);
 }
 
 .table-row:last-child {
@@ -339,31 +364,33 @@ body {
   left: 50%;
   transform: translateX(-10%);
 
-  width: 360px;
-  padding: var(--spacing-sm);
+  width: 320px;
+  padding: 0.5rem;
 
-  background-color: var(--color-text);
-  color: var(--color-surface);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 4px 12px var(--color-shadow);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-radius: 0;
+  border: 2px solid var(--color-border);
+  /* Hard pixel shadow */
+  box-shadow: 4px 4px 0 0 var(--color-shadow);
 
   font-size: var(--font-size-sm);
   word-break: break-word;
   text-align: left;
 
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity 0.08s steps(1), visibility 0.08s steps(1);
   z-index: 10;
   pointer-events: none;
 }
 
-/* Interactive styles */
+/* Pixel-style focus and hover */
 .card:focus-within,
 .card:hover {
-  box-shadow: 0 12px 32px var(--color-shadow);
-  border-color: var(--color-focus);
-  transform: translateY(-2px) scale(1.01); /* Added scale for elegance */
-  opacity: 0.98; /* Subtle opacity change */
+  /* offset the element slightly up-left to simulate button press */
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 0 var(--color-shadow);
+  border-color: var(--color-primary);
+  opacity: 1;
 }
 
 .table-row:focus-within,
@@ -384,69 +411,24 @@ body {
 
 @media (max-width: 48rem) {
   :root {
-    --border-radius: 4px;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.375rem;
-    --spacing-lg: 1.25rem;
+    --font-size-lg: 0.95rem;
+    --font-size-xl: 1.05rem;
+    --spacing-lg: 1rem;
     --spacing-sm: 0.5rem;
-    --spacing-xl: 1.5rem;
-  }
-
-  .container {
-    width: 100vw;
-  }
-
-  .main-grid {
-    flex-direction: column;
-  }
-
-  .grid {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-
-  .table {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Responsive table: stack cells vertically for better readability on small screens */
-  .table-header,
-  .table-row {
-    display: flex;
-    flex-direction: column;
-    min-width: auto;
-  }
-
-  .table-cell {
-    flex: 0 0 auto;
-    line-height: 1.4;
-    white-space: normal;
-    word-break: break-word;
+    --spacing-xl: 1.25rem;
   }
 
   .card {
-    box-shadow: 0 6px 16px var(--color-shadow);
+    box-shadow: 4px 4px 0 0 var(--color-shadow);
   }
 
   .card-icon {
-    width: 2.25rem;
-    height: auto;
-  }
-
-  /* Improve tap handling and scrolling performance */
-  .icon,
-  .card,
-  .table {
-    -webkit-tap-highlight-color: var(--color-shadow);
-    touch-action: manipulation;
-    -ms-touch-action: manipulation;
+    width: 1.75rem;
+    height: 1.75rem;
   }
 
   .tooltip {
-    bottom: auto;
-    top: 100%;
-    left: 0;
+    width: 260px;
+    box-shadow: 3px 3px 0 0 var(--color-shadow);
   }
 }

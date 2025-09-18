@@ -1,20 +1,19 @@
 :root {
-  --color-primary: #2563eb;
-  --color-secondary: #64748b;
-  --color-background: #f3f4f6;
-  --color-surface: #ffffff;
-  --color-text: #1e293b;
-  --color-text-secondary: #64748b;
-  --color-border: #dbeafe;
-  --color-shadow: rgba(37, 99, 235, 0.08);
-  --color-success: #22c55e;
-  --color-error: #ef4444;
-  --color-warning: #f59e0b;
-  --color-info: #0ea5e9;
-  --color-focus: #2563eb;
+  --color-primary: #7aa973;
+  --color-secondary: #b98b55;
+  --color-background: #f6efe7;
+  --color-surface: #fffaf2;
+  --color-text: #2b2620;
+  --color-text-secondary: #7b6a55;
+  --color-border: #e6dccf;
+  --color-shadow: rgba(43, 38, 28, 0.06);
+  --color-success: #6bbf59;
+  --color-error: #e07b7b;
+  --color-warning: #f0b36b;
+  --color-info: #6fbad9;
+  --color-focus: #d9a44a;
 
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family: Georgia, "Palatino Linotype", "Times New Roman", "Noto Serif", serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -35,19 +34,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-primary: #60a5fa;
-    --color-secondary: #94a3b8;
-    --color-background: #0f172a;
-    --color-surface: #1e293b;
-    --color-text: #f3f4f6;
-    --color-text-secondary: #94a3b8;
-    --color-border: #334155;
-    --color-shadow: rgba(96, 165, 250, 0.15);
-    --color-success: #4ade80;
-    --color-error: #f87171;
-    --color-warning: #fde68a;
-    --color-info: #38bdf8;
-    --color-focus: #60a5fa;
+    /* Ghibli-night palette: deep forest / moonlit paper */
+    --color-primary: #8fc98c;
+    --color-secondary: #c39b70;
+    --color-background: #0f1720;
+    --color-surface: #172024;
+    --color-text: #f3efe6;
+    --color-text-secondary: #bdae9a;
+    --color-border: #2a2f2b;
+    --color-shadow: rgba(11, 15, 12, 0.12);
+    --color-success: #8fe08a;
+    --color-error: #f29a98;
+    --color-warning: #f6c78a;
+    --color-info: #8fd6f0;
+    --color-focus: #f0c87a;
   }
 }
 
@@ -60,6 +60,12 @@ body {
   line-height: 1.6;
   color: var(--color-text);
   background-color: var(--color-background);
+
+  /* Paper-like subtle texture using layered gradients */
+  background-image: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.02), transparent 8%),
+    radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.01), transparent 10%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -107,10 +113,10 @@ body {
 .card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md); /* Increased padding for better spacing */
-  box-shadow: 0 8px 24px var(--color-shadow); /* Enhanced shadow for depth */
-  transition: all 0.4s ease; /* Smoother transition */
+  border-radius: 10px; /* slightly more organic radius */
+  padding: var(--spacing-md);
+  box-shadow: 0 8px 20px var(--color-shadow);
+  transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
 }
 
 .card-col {
@@ -123,6 +129,8 @@ body {
   width: auto;
   height: 1em;
   margin-bottom: var(--spacing-sm);
+  filter: sepia(0.08) saturate(1.1) contrast(0.95);
+  transition: transform 0.28s ease;
 }
 
 .grid {
@@ -330,6 +338,7 @@ body {
 }
 
 .tooltip {
+  /* swap to parchment-like tooltip for Ghibli feel */
   opacity: 0;
   visibility: hidden;
 
@@ -342,11 +351,11 @@ body {
   width: 360px;
   padding: var(--spacing-sm);
 
-  background-color: var(--color-text);
-  color: var(--color-surface);
-  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-radius: calc(var(--border-radius) - 2px);
   border: 1px solid var(--color-border);
-  box-shadow: 0 4px 12px var(--color-shadow);
+  box-shadow: 0 6px 18px var(--color-shadow);
 
   font-size: var(--font-size-sm);
   word-break: break-word;
@@ -360,10 +369,10 @@ body {
 /* Interactive styles */
 .card:focus-within,
 .card:hover {
-  box-shadow: 0 12px 32px var(--color-shadow);
+  box-shadow: 0 14px 34px var(--color-shadow);
   border-color: var(--color-focus);
-  transform: translateY(-2px) scale(1.01); /* Added scale for elegance */
-  opacity: 0.98; /* Subtle opacity change */
+  transform: translateY(-4px);
+  opacity: 0.99;
 }
 
 .table-row:focus-within,
