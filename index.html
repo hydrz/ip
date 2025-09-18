@@ -246,120 +246,120 @@
         <!-- Right: CDN cards and DNS list -->
         <aside class="sidebar">
           <h2 class="sr-only">网络分析工具</h2>
-          <div>
+          <div id="cdn-test">
             <h3 class="title">CDN 命中节点测试</h3>
             <div class="grid">
               <!-- Cloudflare -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="cloudflare">
                 <img class="card-icon" src="/cdn-logo/cloudflare.svg" alt="Cloudflare CDN 服务提供商标志" />
                 <div class="text-meta">Cloudflare</div>
                 <div class="divider"></div>
-                <div id="cdn-cloudflare-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- Fastly -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="fastly">
                 <img class="card-icon" src="/cdn-logo/fastly.svg" alt="Fastly CDN 服务提供商标志" />
                 <div class="text-meta">Fastly</div>
                 <div class="divider"></div>
-                <div id="cdn-fastly-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- EdgeOne -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="edge">
                 <img class="card-icon" src="/cdn-logo/edgeone.png" alt="EdgeOne" />
                 <div class="text-meta">EdgeOne</div>
                 <div class="divider"></div>
-                <div id="cdn-edge-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- jsDelivr -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="jsdelivr">
                 <img class="card-icon" src="/cdn-logo/jsdelivr.svg" alt="jsDelivr" />
                 <div class="text-meta">jsDelivr</div>
                 <div class="divider"></div>
-                <div id="cdn-jsdelivr-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- AWS CloudFront -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="cloudfront">
                 <img class="card-icon" src="/cdn-logo/cloudfront.svg" alt="AWS CloudFront" />
                 <div class="text-meta">AWS CloudFront</div>
                 <div class="divider"></div>
-                <div id="cdn-cloudfront-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- Bunny Standard -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="bunnystandard">
                 <img class="card-icon" src="/cdn-logo/bunny.svg" alt="Bunny Standard" />
                 <div class="text-meta">Bunny Standard</div>
                 <div class="divider"></div>
-                <div id="cdn-bunnystandard-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- Bunny Volume -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="bunnyvolume">
                 <img class="card-icon" src="/cdn-logo/bunny.svg" alt="Bunny Volume" />
                 <div class="text-meta">Bunny Volume</div>
                 <div class="divider"></div>
-                <div id="cdn-bunnyvolume-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- CDN77 -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="cdn77">
                 <img class="card-icon" src="/cdn-logo/cdn77.svg" alt="CDN77" />
                 <div class="text-meta">CDN77</div>
                 <div class="divider"></div>
-                <div id="cdn-cdn77-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- G-Core Labs -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="gcorelabs">
                 <img class="card-icon" src="/cdn-logo/gcorelabs.svg" alt="G-Core Labs" />
                 <div class="text-meta">G-Core Labs</div>
                 <div class="divider"></div>
-                <div id="cdn-gcorelabs-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- Virtuozzo (CDN.net) -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="virtuozzo">
                 <img class="card-icon" src="/cdn-logo/virtuozzo.svg" alt="Virtuozzo (CDN.net)" />
                 <div class="text-meta">Virtuozzo (CDN.net)</div>
                 <div class="divider"></div>
-                <div id="cdn-virtuozzo-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- OVH CDN -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="ovh">
                 <img class="card-icon" src="/cdn-logo/ovh.svg" alt="OVH CDN" />
                 <div class="text-meta">OVH CDN</div>
                 <div class="divider"></div>
-                <div id="cdn-ovh-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- CacheFly -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="cachefly">
                 <img class="card-icon" src="/cdn-logo/cachefly.svg" alt="CacheFly" />
                 <div class="text-meta">CacheFly</div>
                 <div class="divider"></div>
-                <div id="cdn-cachefly-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- Medianova -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="medianova">
                 <img class="card-icon" src="/cdn-logo/medianova.svg" alt="Medianova" />
                 <div class="text-meta">Medianova</div>
                 <div class="divider"></div>
-                <div id="cdn-medianova-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- Zenlayer -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="zenlayer">
                 <img class="card-icon" src="/cdn-logo/zenlayer.svg" alt="Zenlayer" />
                 <div class="text-meta">Zenlayer</div>
                 <div class="divider"></div>
-                <div id="cdn-zenlayer-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- Melbicom -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="melbicom">
                 <img class="card-icon" src="/cdn-logo/melbicom.svg" alt="Melbicom" />
                 <div class="text-meta">Melbicom</div>
                 <div class="divider"></div>
-                <div id="cdn-melbicom-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
               <!-- KeyCDN -->
-              <div class="card card-col">
+              <div class="card card-col" data-provider="keycdn">
                 <img class="card-icon" src="/cdn-logo/keycdn.svg" alt="KeyCDN" />
                 <div class="text-meta">KeyCDN</div>
                 <div class="divider"></div>
-                <div id="cdn-keycdn-hit" class="text-meta">-</div>
+                <div class="text-meta" data-label="节点">-</div>
               </div>
             </div>
           </div>

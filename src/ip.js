@@ -206,8 +206,8 @@ const IP_SERVICES = [
 
 // Get element selectors for service
 const serviceElementSelectors = (service) => ({
-	ipSelector: `.ip-row[data-provider="${service.name}"] [data-label="IP地址"]`,
-	addrSelector: `.ip-row[data-provider="${service.name}"] [data-label="位置"]`,
+	ipSelector: `#ip-table [data-provider="${service.name}"] [data-label="IP地址"]`,
+	addrSelector: `#ip-table [data-provider="${service.name}"] [data-label="位置"]`,
 });
 
 // Store original data in DOM
@@ -219,20 +219,36 @@ const storeOriginalData = (service, ip, addr) => {
 	if (addrCell) addrCell.dataset.originalAddr = addr;
 };
 
+// New helper: return only services that have a corresponding data-provider row in the DOM.
+// This avoids calling network requests or DOM updates for services not present in index.html.
+const getRenderedServices = () =>
+	IP_SERVICES.filter((service) =>
+		document.querySelector(`#ip-table [data-provider="${service.name}"]`),
+	);
+
 // Fill result with privacy applied
 const fillResult = (service, ip, addr) => {
 	const { displayIP, displayAddr } = applyPrivacySettings(service, ip, addr);
 	const { ipSelector, addrSelector } = serviceElementSelectors(service);
 	const ipCell = document.querySelector(ipSelector);
 	const addrCell = document.querySelector(addrSelector);
-	if (ipCell) ipCell.textContent = displayIP; ipCell.title = displayIP;
-	if (addrCell) addrCell.textContent = displayAddr; addrCell.title = displayAddr;
+	// Only update ipCell if it exists.
+	if (ipCell) {
+		ipCell.textContent = displayIP;
+		ipCell.title = displayIP;
+	}
+	// Only update addrCell if it exists.
+	if (addrCell) {
+		addrCell.textContent = displayAddr;
+		addrCell.title = displayAddr;
+	}
 };
 
 // Fetch IP data
 const fetchIpData = async () => {
+	const servicesToFetch = getRenderedServices();
 	await Promise.all(
-		IP_SERVICES.map(async (service) => {
+		servicesToFetch.map(async (service) => {
 			try {
 				const controller = new AbortController();
 				const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -242,7 +258,7 @@ const fetchIpData = async () => {
 				fillResult(service, ip, addr);
 			} catch (error) {
 				console.error(`Unexpected error for ${service.name}:`, error.message);
-				fillResult(service, "网络错误，请重试", "");
+				fillResult(service, '网络错误，请重试', '');
 			}
 		}),
 	);
@@ -250,7 +266,8 @@ const fetchIpData = async () => {
 
 // Update all displays
 const updateAllDisplays = () => {
-	IP_SERVICES.forEach((service) => {
+	const servicesToUpdate = getRenderedServices();
+	servicesToUpdate.forEach((service) => {
 		const { ipSelector, addrSelector } = serviceElementSelectors(service);
 		const ipCell = document.querySelector(ipSelector);
 		const addrCell = document.querySelector(addrSelector);

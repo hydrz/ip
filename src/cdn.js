@@ -1,8 +1,6 @@
-// CDN hit node test
 const CDN_TESTS = [
 	{
-		id: "cdn-cloudflare-hit",
-		name: "Cloudflare",
+		provider: "cloudflare",
 		fetch: async () => {
 			const response = await fetch("/favicon.svg", {
 				method: "HEAD",
@@ -15,8 +13,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-fastly-hit",
-		name: "Fastly",
+		provider: "fastly",
 		fetch: async () => {
 			const response = await fetch("https://any.pops.fastly-analytics.com", {
 				method: "HEAD",
@@ -33,8 +30,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-edge-hit",
-		name: "EdgeOne",
+		provider: "edge",
 		fetch: async () => {
 			const response = await fetch("https://edge.hydrz.cn/cdn-cgi/trace");
 			const text = await response.text();
@@ -51,8 +47,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-jsdelivr-hit",
-		name: "jsDelivr",
+		provider: "jsdelivr",
 		fetch: async () => {
 			const response = await fetch("https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js", {
 				method: "HEAD",
@@ -77,8 +72,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-cloudfront-hit",
-		name: "AWS CloudFront",
+		provider: "cloudfront",
 		fetch: async () => {
 			const response = await fetch("https://d3888oxgux3fey.cloudfront.net/500b-bench.jpg", {
 				method: "HEAD",
@@ -91,8 +85,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-bunnystandard-hit",
-		name: "Bunny Standard",
+		provider: "bunnystandard",
 		fetch: async () => {
 			const response = await fetch("https://test.b-cdn.net/", {
 				method: "HEAD",
@@ -109,8 +102,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-bunnyvolume-hit",
-		name: "Bunny Volume",
+		provider: "bunnyvolume",
 		fetch: async () => {
 			const response = await fetch("https://testvideo.b-cdn.net/", {
 				method: "HEAD",
@@ -127,8 +119,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-cdn77-hit",
-		name: "CDN77",
+		provider: "cdn77",
 		fetch: async () => {
 			const response = await fetch("https://1596384882.rsc.cdn77.org/500b-bench.jpg", {
 				method: "HEAD",
@@ -141,8 +132,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-gcorelabs-hit",
-		name: "G-Core Labs",
+		provider: "gcorelabs",
 		fetch: async () => {
 			const response = await fetch("https://perfops.gcorelabs.com/500b-bench.jpg", {
 				method: "HEAD",
@@ -155,8 +145,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-virtuozzo-hit",
-		name: "Virtuozzo (CDN.net)",
+		provider: "virtuozzo",
 		fetch: async () => {
 			const response = await fetch("https://perfops.r.worldssl.net/500b-bench.jpg", {
 				method: "HEAD",
@@ -169,8 +158,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-ovh-hit",
-		name: "OVH CDN",
+		provider: "ovh",
 		fetch: async () => {
 			const response = await fetch("https://ovh-cdn.perfops.io/500b-bench.jpg", {
 				method: "HEAD",
@@ -183,8 +171,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-cachefly-hit",
-		name: "CacheFly",
+		provider: "cachefly",
 		fetch: async () => {
 			const response = await fetch("https://cdnperf.cachefly.net/500b-bench.jpg", {
 				method: "HEAD",
@@ -200,8 +187,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-medianova-hit",
-		name: "Medianova",
+		provider: "medianova",
 		fetch: async () => {
 			const response = await fetch("https://medianova-cdnvperf.mncdn.com/500b-bench.jpg", {
 				method: "HEAD",
@@ -214,8 +200,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-zenlayer-hit",
-		name: "Zenlayer",
+		provider: "zenlayer",
 		fetch: async () => {
 			const response = await fetch("https://test-perfops.ecn.zenlayer.net/500b-bench.jpg", {
 				method: "HEAD",
@@ -232,8 +217,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-melbicom-hit",
-		name: "Melbicom",
+		provider: "melbicom",
 		fetch: async () => {
 			const response = await fetch("https://perfops.swiftycdn.net/500b-sw-bench.jpg", {
 				method: "HEAD",
@@ -249,8 +233,7 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: "cdn-keycdn-hit",
-		name: "KeyCDN",
+		provider: "keycdn",
 		fetch: async () => {
 			const response = await fetch("https://www.keycdn.com/favicon.ico", {
 				method: "HEAD",
@@ -265,9 +248,14 @@ const CDN_TESTS = [
 	},
 ];
 
-// Run CDN tests with retries
+// New helper: only run tests for providers actually rendered in index.html (cards).
+const getRenderedCDNTests = () =>
+	CDN_TESTS.filter((test) => document.querySelector(`#cdn-test [data-provider="${test.provider}"]`));
+
+// Run CDN tests with retries (only for rendered providers)
 const runCDNTests = async () => {
-	const promises = CDN_TESTS.map(async (test) => {
+	const testsToRun = getRenderedCDNTests();
+	const promises = testsToRun.map(async (test) => {
 		let result = "获取失败";
 		for (let attempt = 1; attempt <= 3; attempt++) {
 			try {
@@ -282,8 +270,8 @@ const runCDNTests = async () => {
 				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 			}
 		}
-		const element = document.getElementById(test.id);
-		if (element) element.textContent = result;
+		const resultEl = document.querySelector(`#cdn-test [data-provider="${test.provider}"] [data-label="节点"]`);
+		if (resultEl) resultEl.textContent = result;
 	});
 	await Promise.all(promises);
 };
