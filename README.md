@@ -104,6 +104,10 @@
      npm run deploy
      ```
 
+### 一键部署
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hydrz/ip)
+
 ## 使用方法
 
 - 访问网站后，页面会自动加载 IP 信息和运行各项测试。
