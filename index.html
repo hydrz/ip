@@ -23,11 +23,80 @@
     <style>
       /* Specific table row styles */
       .ip-row {
-        grid-template-columns: 3em 1fr 2fr 2fr;
+        display: flex;
+      }
+
+      .ip-row .table-cell:nth-child(1) {
+        flex: 0 0 3em;
+      }
+
+      .ip-row .table-cell:nth-child(2) {
+        flex: 1;
+      }
+
+      .ip-row .table-cell:nth-child(3) {
+        flex: 2;
+      }
+
+      .ip-row .table-cell:nth-child(4) {
+        flex: 2;
+      }
+
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: var(--spacing-md);
+        padding: var(--spacing-lg); /* Increased padding */
+        background-color: var(--color-surface);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--color-border);
+        flex-wrap: wrap;
+        gap: var(--spacing-lg); /* Increased gap */
+        box-shadow: 0 6px 20px var(--color-shadow); /* Enhanced shadow */
+      }
+
+      .controls-ip {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg); /* Increased gap */
+        flex-wrap: wrap;
       }
 
       .dns-row {
-        grid-template-columns: 3em 1fr 1fr 2fr;
+        display: flex;
+      }
+
+      .dns-row .table-cell:nth-child(1) {
+        flex: 0 0 3em;
+      }
+
+      .dns-row .table-cell:nth-child(2) {
+        flex: 1;
+      }
+
+      .dns-row .table-cell:nth-child(3) {
+        flex: 1;
+      }
+
+      .dns-row .table-cell:nth-child(4) {
+        flex: 2;
+      }
+
+      @media (max-width: 768px) {
+        .dns-header {
+          display: none;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .controls-ip {
+          flex-direction: column;
+          align-items: flex-start;
+        }
       }
     </style>
   </head>
@@ -113,7 +182,7 @@
                   <div class="tooltip-arrow" data-popper-arrow></div>
                 </div>
               </div>
-              <div style="display: flex; flex-wrap: wrap">
+              <div class="controls-ip">
                 <label class="switch">
                   <span class="text-label">隐藏 IP</span>
                   <input id="hide-ip-toggle" type="checkbox" value="" class="switch-input" aria-label="隐藏 IP" />
@@ -311,7 +380,7 @@
             <h3 class="title">DNS 出口查询</h3>
             <div class="card" tabindex="0">
               <div id="dns-list" class="table">
-                <div class="table-header dns-row">
+                <div class="table-header dns-header dns-row">
                   <div class="table-cell text-title">服务商</div>
                   <div class="table-cell text-title">运营商</div>
                   <div class="table-cell text-title">IP地址</div>
