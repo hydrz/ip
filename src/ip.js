@@ -57,17 +57,17 @@ const generateRandomAddress = (isDomestic) => {
 // Safe fetch wrapper with retries
 const safeFetch =
 	(serviceName, fetchFn, retries = 3) =>
-		async () => {
-			for (let attempt = 1; attempt <= retries; attempt++) {
-				try {
-					return await fetchFn();
-				} catch (error) {
-					console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
-					if (attempt === retries) return { ip: "获取失败", addr: "" };
-					await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
-				}
+	async () => {
+		for (let attempt = 1; attempt <= retries; attempt++) {
+			try {
+				return await fetchFn();
+			} catch (error) {
+				console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
+				if (attempt === retries) return { ip: "获取失败", addr: "" };
+				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 			}
-		};
+		}
+	};
 
 // Fetch JSON with error handling
 const fetchJson = async (url) => {
@@ -222,9 +222,7 @@ const storeOriginalData = (service, ip, addr) => {
 // New helper: return only services that have a corresponding data-provider row in the DOM.
 // This avoids calling network requests or DOM updates for services not present in index.html.
 const getRenderedServices = () =>
-	IP_SERVICES.filter((service) =>
-		document.querySelector(`#ip-table [data-provider="${service.name}"]`),
-	);
+	IP_SERVICES.filter((service) => document.querySelector(`#ip-table [data-provider="${service.name}"]`));
 
 // Fill result with privacy applied
 const fillResult = (service, ip, addr) => {
@@ -258,7 +256,7 @@ const fetchIpData = async () => {
 				fillResult(service, ip, addr);
 			} catch (error) {
 				console.error(`Unexpected error for ${service.name}:`, error.message);
-				fillResult(service, '网络错误，请重试', '');
+				fillResult(service, "网络错误，请重试", "");
 			}
 		}),
 	);

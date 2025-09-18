@@ -1,78 +1,82 @@
 :root {
-  --color-primary: #7aa973;
-  --color-secondary: #b98b55;
-  --color-background: #f6efe7;
-  --color-surface: #fffaf2;
-  --color-text: #2b2620;
-  --color-text-secondary: #7b6a55;
-  --color-border: #e6dccf;
-  --color-shadow: rgba(43, 38, 28, 0.06);
-  --color-success: #6bbf59;
-  --color-error: #e07b7b;
-  --color-warning: #f0b36b;
-  --color-info: #6fbad9;
-  --color-focus: #d9a44a;
+	--color-primary: #7aa973;
+	--color-secondary: #b98b55;
+	--color-background: #f6efe7;
+	--color-surface: #fffaf2;
+	--color-text: #2b2620;
+	--color-text-secondary: #7b6a55;
+	--color-border: #e6dccf;
+	--color-shadow: rgba(43, 38, 28, 0.06);
+	--color-success: #6bbf59;
+	--color-error: #e07b7b;
+	--color-warning: #f0b36b;
+	--color-info: #6fbad9;
+	--color-focus: #d9a44a;
 
-  --font-family: Georgia, "Palatino Linotype", "Times New Roman", "Noto Serif", serif;
+	--font-family: Georgia, "Palatino Linotype", "Times New Roman", "Noto Serif", serif;
 }
 
 /* Dark mode variable overrides */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: #8fc98c;
-    --color-secondary: #c39b70;
-    --color-background: #0f1720;
-    --color-surface: #172024;
-    --color-text: #f3efe6;
-    --color-text-secondary: #bdae9a;
-    --color-border: #2a2f2b;
-    --color-shadow: rgba(11, 15, 12, 0.12);
-    --color-focus: #f0c87a;
-  }
+	:root {
+		--color-primary: #8fc98c;
+		--color-secondary: #c39b70;
+		--color-background: #0f1720;
+		--color-surface: #172024;
+		--color-text: #f3efe6;
+		--color-text-secondary: #bdae9a;
+		--color-border: #2a2f2b;
+		--color-shadow: rgba(11, 15, 12, 0.12);
+		--color-focus: #f0c87a;
+	}
 }
 
 /* Body texture specific to Ghibli theme */
 body {
-  /* Paper-like subtle texture using layered gradients */
-  background-image: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.02), transparent 8%),
-    radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.01), transparent 10%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+	/* Paper-like subtle texture using layered gradients */
+	background-image:
+		radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.02), transparent 8%),
+		radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.01), transparent 10%);
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 }
 
 /* Card subtle style adjustments for this theme */
 .card {
-  /* Slightly more organic radius and warmer shadow for the Ghibli feel. */
-  border-radius: 10px;
-  box-shadow: 0 8px 20px var(--color-shadow);
-  transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
+	/* Slightly more organic radius and warmer shadow for the Ghibli feel. */
+	border-radius: 10px;
+	box-shadow: 0 8px 20px var(--color-shadow);
+	transition:
+		transform 0.32s ease,
+		box-shadow 0.32s ease,
+		border-color 0.32s ease;
 }
 
 /* Card icon tweaks */
 .card-icon {
-  filter: sepia(0.08) saturate(1.1) contrast(0.95);
-  transition: transform 0.28s ease;
+	filter: sepia(0.08) saturate(1.1) contrast(0.95);
+	transition: transform 0.28s ease;
 }
 
 /* Tooltip styled like parchment for this theme */
 .tooltip {
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  border-radius: calc(var(--border-radius, 8px) - 2px);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 6px 18px var(--color-shadow);
+	background-color: var(--color-surface);
+	color: var(--color-text);
+	border-radius: calc(var(--border-radius, 8px) - 2px);
+	border: 1px solid var(--color-border);
+	box-shadow: 0 6px 18px var(--color-shadow);
 }
 
 /* Small responsive tweaks preserved here if needed */
 @media (max-width: 48rem) {
-  .card-icon {
-    width: 2.25rem;
-    height: auto;
-  }
+	.card-icon {
+		width: 2.25rem;
+		height: auto;
+	}
 
-  .tooltip {
-    bottom: auto;
-    top: 100%;
-    left: 0;
-  }
+	.tooltip {
+		bottom: auto;
+		top: 100%;
+		left: 0;
+	}
 }

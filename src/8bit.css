@@ -1,95 +1,102 @@
 :root {
-  --color-primary: #00aaff;
-  --color-secondary: #ffaa00;
-  --color-background: #f8f8f8;
-  --color-surface: #ffffff;
-  --color-text: #0b0b0b;
-  --color-text-secondary: #6b6b6b;
-  --color-border: #000000;
-  --color-shadow: #000000;
-  --color-success: #00cc66;
-  --color-error: #ff3366;
-  --color-warning: #ffd24d;
-  --color-info: #66ccff;
-  --color-focus: #ff00ff;
+	--color-primary: #00aaff;
+	--color-secondary: #ffaa00;
+	--color-background: #f8f8f8;
+	--color-surface: #ffffff;
+	--color-text: #0b0b0b;
+	--color-text-secondary: #6b6b6b;
+	--color-border: #000000;
+	--color-shadow: #000000;
+	--color-success: #00cc66;
+	--color-error: #ff3366;
+	--color-warning: #ffd24d;
+	--color-info: #66ccff;
+	--color-focus: #ff00ff;
 
-  --font-family: "Press Start 2P", "Courier New", monospace;
+	--font-family: "Press Start 2P", "Courier New", monospace;
 }
 
 /* Dark mode variable overrides */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: #00e6ff;
-    --color-secondary: #ffcc66;
-    --color-background: #0b0b0b;
-    --color-surface: #111111;
-    --color-text: #e6e6e6;
-    --color-text-secondary: #9a9a9a;
-    --color-border: #000000;
-    --color-shadow: #000000;
-    --color-focus: #ff66ff;
-  }
+	:root {
+		--color-primary: #00e6ff;
+		--color-secondary: #ffcc66;
+		--color-background: #0b0b0b;
+		--color-surface: #111111;
+		--color-text: #e6e6e6;
+		--color-text-secondary: #9a9a9a;
+		--color-border: #000000;
+		--color-shadow: #000000;
+		--color-focus: #ff66ff;
+	}
 }
 
 /* Pixel grid background for the 8-bit theme */
 body {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 8px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 8px);
-  background-size: 8px 8px, 8px 8px;
-  background-attachment: fixed;
+	background-image:
+		linear-gradient(0deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 8px),
+		linear-gradient(90deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 8px);
+	background-size:
+		8px 8px,
+		8px 8px;
+	background-attachment: fixed;
 
-  /* Use crisp pixel rendering for icons/images in this theme */
-  image-rendering: pixelated;
-  -ms-interpolation-mode: nearest-neighbor;
+	/* Use crisp pixel rendering for icons/images in this theme */
+	image-rendering: pixelated;
+	-ms-interpolation-mode: nearest-neighbor;
 }
 
 /* Card: pixel-style bold outline and hard shadow */
 .card {
-  /* Bold black outline and hard shadow to keep pixel aesthetic. */
-  border: 2px solid var(--color-border);
-  border-radius: 0;
-  box-shadow: 6px 6px 0 0 var(--color-shadow);
-  transition: transform 0.12s steps(1), box-shadow 0.12s steps(1);
+	/* Bold black outline and hard shadow to keep pixel aesthetic. */
+	border: 2px solid var(--color-border);
+	border-radius: 0;
+	box-shadow: 6px 6px 0 0 var(--color-shadow);
+	transition:
+		transform 0.12s steps(1),
+		box-shadow 0.12s steps(1);
 }
 
 /* Make icons render pixelated and slightly larger for retro look */
 .card-icon {
-  image-rendering: pixelated;
-  -webkit-image-rendering: pixelated;
-  -moz-crisp-edges: crisp-edges;
-  filter: none;
+	image-rendering: pixelated;
+	-webkit-image-rendering: pixelated;
+	-moz-crisp-edges: crisp-edges;
+	filter: none;
 }
 
 /* Tables and tooltips with pixel-like borders */
 .table {
-  border: 2px solid var(--color-border);
-  background: var(--color-surface);
+	border: 2px solid var(--color-border);
+	background: var(--color-surface);
 }
 
 .tooltip {
-  width: 320px;
-  padding: 0.5rem;
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  border-radius: 0;
-  border: 2px solid var(--color-border);
-  box-shadow: 4px 4px 0 0 var(--color-shadow);
-  transition: opacity 0.08s steps(1), visibility 0.08s steps(1);
+	width: 320px;
+	padding: 0.5rem;
+	background-color: var(--color-surface);
+	color: var(--color-text);
+	border-radius: 0;
+	border: 2px solid var(--color-border);
+	box-shadow: 4px 4px 0 0 var(--color-shadow);
+	transition:
+		opacity 0.08s steps(1),
+		visibility 0.08s steps(1);
 }
 
 /* Small responsive tweaks */
 @media (max-width: 48rem) {
-  .card {
-    box-shadow: 4px 4px 0 0 var(--color-shadow);
-  }
+	.card {
+		box-shadow: 4px 4px 0 0 var(--color-shadow);
+	}
 
-  .card-icon {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
+	.card-icon {
+		width: 1.75rem;
+		height: 1.75rem;
+	}
 
-  .tooltip {
-    width: 260px;
-    box-shadow: 3px 3px 0 0 var(--color-shadow);
-  }
+	.tooltip {
+		width: 260px;
+		box-shadow: 3px 3px 0 0 var(--color-shadow);
+	}
 }
