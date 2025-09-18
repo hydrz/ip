@@ -64,11 +64,6 @@
           display: none;
         }
 
-        .controls {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
         .controls-ip {
           flex-direction: column;
           align-items: flex-start;
@@ -76,7 +71,7 @@
       }
     </style>
   </head>
-  <body class="body-style">
+  <body>
     <div class="container">
       <main class="main-grid">
         <!-- Left: IP table -->
@@ -228,7 +223,7 @@
           <h2 class="sr-only">网络分析工具</h2>
           <div>
             <h3 class="title">CDN 命中节点测试</h3>
-            <div id="cdn-grid" class="grid">
+            <div class="grid">
               <!-- Cloudflare -->
               <div class="card card-col">
                 <img class="card-icon" src="/cdn-logo/cloudflare.svg" alt="Cloudflare CDN 服务提供商标志" />

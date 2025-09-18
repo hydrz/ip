@@ -127,16 +127,26 @@ body {
 
 .grid {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--spacing-md);
 }
 
 .grid .card {
-  flex: 1 1 150px;
+  flex: 0 0 calc(25% - var(--spacing-sm));
+  min-width: calc(25% - var(--spacing-sm));
   min-height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+@media (max-width: 80rem) {
+  .grid .card {
+    flex: 0 0 calc(50% - var(--spacing-sm));
+    min-width: calc(50% - var(--spacing-sm));
+  }
 }
 
 .footer {
@@ -372,20 +382,7 @@ body {
   visibility: visible;
 }
 
-/* Media queries */
-@media (max-width: 1200px) {
-  .main-grid {
-    flex-direction: column;
-    gap: var(--spacing-lg);
-  }
-
-  .grid {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-}
-
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .container {
     width: 100vw;
     padding: var(--spacing-md);
@@ -400,11 +397,6 @@ body {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-  }
-
-  .grid .card {
-    flex: 0 0 calc(50% - var(--spacing-sm));
-    min-width: calc(50% - var(--spacing-sm));
   }
 
   .table {
@@ -470,7 +462,7 @@ body {
 }
 
 /* Additional very-small-screen adjustments */
-@media (max-width: 480px) {
+@media (max-width: 40rem) {
   :root {
     --font-size-xs: 0.7rem;
     --font-size-sm: 0.825rem;
