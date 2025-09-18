@@ -1,17 +1,17 @@
 :root {
-  --color-primary: #374151;
-  --color-secondary: #6b7280;
-  --color-background: #f9fafb;
+  --color-primary: #2563eb;
+  --color-secondary: #64748b;
+  --color-background: #f3f4f6;
   --color-surface: #ffffff;
-  --color-text: #111827;
-  --color-text-secondary: #6b7280;
-  --color-border: #e5e7eb;
-  --color-shadow: rgba(0, 0, 0, 0.05);
-  --color-success: #10b981;
+  --color-text: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-border: #dbeafe;
+  --color-shadow: rgba(37, 99, 235, 0.08);
+  --color-success: #22c55e;
   --color-error: #ef4444;
   --color-warning: #f59e0b;
-  --color-info: #3b82f6;
-  --color-focus: #9ca3af;
+  --color-info: #0ea5e9;
+  --color-focus: #2563eb;
 
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -33,27 +33,21 @@
   --spacing-xl: 2rem;
 }
 
-@media (max-width: 48rem) {
-  :root {
-    --border-radius: 4px; /* Reduced for smaller screens */
-  }
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-primary: #d1d5db;
-    --color-secondary: #9ca3af;
-    --color-background: #111827;
-    --color-surface: #1f2937;
-    --color-text: #f9fafb;
-    --color-text-secondary: #d1d5db;
-    --color-border: #374151;
-    --color-shadow: rgba(0, 0, 0, 0.3);
-    --color-success: #34d399;
+    --color-primary: #60a5fa;
+    --color-secondary: #94a3b8;
+    --color-background: #0f172a;
+    --color-surface: #1e293b;
+    --color-text: #f3f4f6;
+    --color-text-secondary: #94a3b8;
+    --color-border: #334155;
+    --color-shadow: rgba(96, 165, 250, 0.15);
+    --color-success: #4ade80;
     --color-error: #f87171;
-    --color-warning: #fbbf24;
-    --color-info: #60a5fa;
-    --color-focus: #6b7280;
+    --color-warning: #fde68a;
+    --color-info: #38bdf8;
+    --color-focus: #60a5fa;
   }
 }
 
@@ -389,21 +383,27 @@ body {
 }
 
 @media (max-width: 48rem) {
+  :root {
+    --border-radius: 4px;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.375rem;
+    --spacing-lg: 1.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-xl: 1.5rem;
+  }
+
   .container {
     width: 100vw;
-    padding: var(--spacing-xs);
   }
 
   .main-grid {
     flex-direction: column;
-    gap: var(--spacing-lg);
   }
 
   .grid {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: var(--spacing-xs);
   }
 
   .table {
@@ -416,46 +416,30 @@ body {
   .table-row {
     display: flex;
     flex-direction: column;
-    padding: var(--spacing-xs) var(--spacing-xs);
-    font-size: var(--font-size-xs);
     min-width: auto;
   }
 
   .table-cell {
     flex: 0 0 auto;
-    font-size: var(--font-size-sm);
-    padding: var(--spacing-xs) 0;
     line-height: 1.4;
     white-space: normal;
     word-break: break-word;
   }
 
   .card {
-    padding: calc(var(--spacing-xs));
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 6px 16px var(--color-shadow);
   }
 
   .card-icon {
     width: 2.25rem;
     height: auto;
-    margin-bottom: var(--spacing-xs);
-  }
-
-  /* Disable hover transforms on touch devices */
-  @media (hover: none) {
-    .card:focus-within,
-    .card:hover {
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-      transform: none;
-      opacity: 1;
-    }
   }
 
   /* Improve tap handling and scrolling performance */
   .icon,
   .card,
   .table {
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: var(--color-shadow);
     touch-action: manipulation;
     -ms-touch-action: manipulation;
   }
@@ -464,6 +448,5 @@ body {
     bottom: auto;
     top: 100%;
     left: 0;
-    margin-top: var(--spacing-xs);
   }
 }
