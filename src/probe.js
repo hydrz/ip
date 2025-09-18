@@ -1,44 +1,44 @@
 // Network connectivity check
 const PROBE_SERVICES = [
 	{
-		name: '百度搜索',
-		domain: 'www.baidu.com',
-		elementId: 'probe-baidu',
+		name: "百度搜索",
+		domain: "www.baidu.com",
+		elementId: "probe-baidu",
 	},
 	{
-		name: '网易云音乐',
-		domain: 'music.163.com',
-		elementId: 'probe-163',
+		name: "网易云音乐",
+		domain: "music.163.com",
+		elementId: "probe-163",
 	},
 	{
-		name: '抖音',
-		domain: 'www.douyin.com',
-		elementId: 'probe-douyin',
+		name: "抖音",
+		domain: "www.douyin.com",
+		elementId: "probe-douyin",
 	},
 	{
-		name: '腾讯视频',
-		domain: 'v.qq.com',
-		elementId: 'probe-tencent-video',
+		name: "腾讯视频",
+		domain: "v.qq.com",
+		elementId: "probe-tencent-video",
 	},
 	{
-		name: 'GitHub',
-		domain: 'github.com',
-		elementId: 'probe-github',
+		name: "GitHub",
+		domain: "github.com",
+		elementId: "probe-github",
 	},
 	{
-		name: 'YouTube',
-		domain: 'www.youtube.com',
-		elementId: 'probe-youtube',
+		name: "YouTube",
+		domain: "www.youtube.com",
+		elementId: "probe-youtube",
 	},
 	{
-		name: 'TikTok',
-		domain: 'www.tiktok.com',
-		elementId: 'probe-tiktok',
+		name: "TikTok",
+		domain: "www.tiktok.com",
+		elementId: "probe-tiktok",
 	},
 	{
-		name: 'Netflix',
-		domain: 'www.netflix.com',
-		elementId: 'probe-netflix',
+		name: "Netflix",
+		domain: "www.netflix.com",
+		elementId: "probe-netflix",
 	},
 ];
 
@@ -48,9 +48,9 @@ const testLatency = async (domain, retries = 3) => {
 		try {
 			const startTime = performance.now();
 			await fetch(`https://${domain}/favicon.ico`, {
-				method: 'HEAD',
-				mode: 'no-cors',
-				cache: 'no-cache',
+				method: "HEAD",
+				mode: "no-cors",
+				cache: "no-cache",
 			});
 			const latency = performance.now() - startTime;
 			return Math.round(latency);
@@ -81,18 +81,18 @@ const updateProbeResult = (elementId, latency) => {
 	if (!element) return;
 
 	if (latency === null) {
-		element.className = 'text-content text-error';
-		element.textContent = '超时';
+		element.className = "text-content text-error";
+		element.textContent = "超时";
 		return;
 	}
 
 	element.textContent = `${latency}ms`;
 	element.className =
 		latency < 100
-			? 'text-content text-success'
+			? "text-content text-success"
 			: latency < 300
-				? 'text-content text-warning'
-				: 'text-content text-error';
+				? "text-content text-warning"
+				: "text-content text-error";
 };
 
 // Run all connectivity tests
@@ -109,4 +109,4 @@ const runConnectivityTests = async () => {
 };
 
 // Run tests on page load
-window.addEventListener('DOMContentLoaded', runConnectivityTests);
+window.addEventListener("DOMContentLoaded", runConnectivityTests);

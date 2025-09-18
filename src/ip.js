@@ -6,7 +6,6 @@ let hideIP = false;
 let hideDomesticGeo = false;
 let hideAllGeo = false;
 
-
 // Domestic province-city mapping
 const PROVINCE_CITY_MAP = {
 	北京: ["北京市"],
@@ -58,17 +57,17 @@ const generateRandomAddress = (isDomestic) => {
 // Safe fetch wrapper with retries
 const safeFetch =
 	(serviceName, fetchFn, retries = 3) =>
-		async () => {
-			for (let attempt = 1; attempt <= retries; attempt++) {
-				try {
-					return await fetchFn();
-				} catch (error) {
-					console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
-					if (attempt === retries) return { ip: "获取失败", addr: "" };
-					await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
-				}
+	async () => {
+		for (let attempt = 1; attempt <= retries; attempt++) {
+			try {
+				return await fetchFn();
+			} catch (error) {
+				console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
+				if (attempt === retries) return { ip: "获取失败", addr: "" };
+				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 			}
-		};
+		}
+	};
 
 // Fetch JSON with error handling
 const fetchJson = async (url) => {

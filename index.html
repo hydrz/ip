@@ -21,7 +21,6 @@
     <link rel="canonical" href="https://ip.hydrz.cn/" />
     <link rel="stylesheet" href="./src/style.css" />
     <style>
-      /* Specific table row styles */
       .ip-row {
         display: flex;
       }
@@ -52,8 +51,12 @@
         border-radius: var(--border-radius);
         border: 1px solid var(--color-border);
         flex-wrap: wrap;
-        gap: var(--spacing-lg); /* Increased gap */
-        box-shadow: 0 6px 20px var(--color-shadow); /* Enhanced shadow */
+        gap: var(--spacing-lg);
+        box-shadow: 0 6px 20px var(--color-shadow);
+      }
+
+      .controls > div:first-child {
+        position: relative;
       }
 
       .controls-ip {
@@ -178,8 +181,7 @@
               <div>
                 <img class="icon" src="/icon/question.svg" alt="隐私保护提示图标" tabindex="0" />
                 <div id="tooltip-default" role="tooltip" class="tooltip">
-                  提示：截图时，你可以通过右侧的开关隐藏 IP 地址和 IP 地理位置 从而保护你的隐私。
-                  <div class="tooltip-arrow" data-popper-arrow></div>
+                  提示：截图时，你可以通过开关隐藏 IP 地址和 IP 地理位置 从而保护你的隐私。
                 </div>
               </div>
               <div class="controls-ip">
@@ -188,12 +190,12 @@
                   <input id="hide-ip-toggle" type="checkbox" value="" class="switch-input" aria-label="隐藏 IP" />
                   <div class="switch-toggle"></div>
                 </label>
-                <label class="switch switch-margin">
+                <label class="switch">
                   <span class="text-label">隐藏国内地理位置</span>
                   <input id="hide-domestic-geo-toggle" type="checkbox" value="" class="switch-input" aria-label="隐藏国内地理位置" />
                   <div class="switch-toggle"></div>
                 </label>
-                <label class="switch switch-margin">
+                <label class="switch">
                   <span class="text-label">隐藏所有地理位置</span>
                   <input id="hide-all-geo-toggle" type="checkbox" value="" class="switch-input" aria-label="隐藏所有地理位置" />
                   <div class="switch-toggle"></div>

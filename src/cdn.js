@@ -249,18 +249,18 @@ const CDN_TESTS = [
 		},
 	},
 	{
-		id: 'cdn-keycdn-hit',
-		name: 'KeyCDN',
+		id: "cdn-keycdn-hit",
+		name: "KeyCDN",
 		fetch: async () => {
-			const response = await fetch('https://www.keycdn.com/favicon.ico', {
-				method: 'HEAD',
-				referrerPolicy: 'no-referrer',
-				credentials: 'omit',
-				mode: 'cors',  // 尝试cors模式
+			const response = await fetch("https://www.keycdn.com/favicon.ico", {
+				method: "HEAD",
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+				mode: "cors", // 尝试cors模式
 			});
 			const headers = response.headers;
-			const location = headers.get('x-edge-location');
-			return location || '-';
+			const location = headers.get("x-edge-location");
+			return location || "-";
 		},
 	},
 ];

@@ -103,7 +103,12 @@ const updateDNSList = (dnsData) => {
 			{ label: "服务商", class: "table-cell text-title", text: provider },
 			{ label: "运营商", class: "table-cell text-meta", text: isp || "Unknown ISP", title: isp || "Unknown ISP" },
 			{ label: "IP地址", class: "table-cell text-content", text: ip },
-			{ label: "位置", class: "table-cell text-meta", text: location || "Unknown Location", title: location || "Unknown Location" },
+			{
+				label: "位置",
+				class: "table-cell text-meta",
+				text: location || "Unknown Location",
+				title: location || "Unknown Location",
+			},
 		];
 		cells.forEach(({ label, class: cls, text, title }) => {
 			const div = document.createElement("div");
