@@ -57,17 +57,17 @@ const generateRandomAddress = (isDomestic) => {
 // Safe fetch wrapper with retries
 const safeFetch =
 	(serviceName, fetchFn, retries = 3) =>
-	async () => {
-		for (let attempt = 1; attempt <= retries; attempt++) {
-			try {
-				return await fetchFn();
-			} catch (error) {
-				console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
-				if (attempt === retries) return { ip: "获取失败", addr: "" };
-				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+		async () => {
+			for (let attempt = 1; attempt <= retries; attempt++) {
+				try {
+					return await fetchFn();
+				} catch (error) {
+					console.error(`${serviceName} error on attempt ${attempt}:`, error.message);
+					if (attempt === retries) return { ip: "获取失败", addr: "" };
+					await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+				}
 			}
-		}
-	};
+		};
 
 // Fetch JSON with error handling
 const fetchJson = async (url) => {
@@ -225,8 +225,8 @@ const fillResult = (service, ip, addr) => {
 	const { ipSelector, addrSelector } = serviceElementSelectors(service);
 	const ipCell = document.querySelector(ipSelector);
 	const addrCell = document.querySelector(addrSelector);
-	if (ipCell) ipCell.textContent = displayIP;
-	if (addrCell) addrCell.textContent = displayAddr;
+	if (ipCell) ipCell.textContent = displayIP; ipCell.title = displayIP;
+	if (addrCell) addrCell.textContent = displayAddr; addrCell.title = displayAddr;
 };
 
 // Fetch IP data
