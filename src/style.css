@@ -25,12 +25,18 @@
   --font-weight-normal: 400;
   --font-weight-semibold: 600;
 
-  --border-radius: 12px; /* Slightly increased for elegance */
+  --border-radius: 8px;
   --spacing-xs: 0.5rem;
   --spacing-sm: 0.75rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
+}
+
+@media (max-width: 48rem) {
+  :root {
+    --border-radius: 4px; /* Reduced for smaller screens */
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -385,7 +391,7 @@ body {
 @media (max-width: 48rem) {
   .container {
     width: 100vw;
-    padding: var(--spacing-md);
+    padding: var(--spacing-xs);
   }
 
   .main-grid {
@@ -397,6 +403,7 @@ body {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    gap: var(--spacing-xs);
   }
 
   .table {
@@ -409,7 +416,7 @@ body {
   .table-row {
     display: flex;
     flex-direction: column;
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-xs);
     font-size: var(--font-size-xs);
     min-width: auto;
   }
@@ -424,14 +431,14 @@ body {
   }
 
   .card {
-    padding: calc(var(--spacing-sm));
+    padding: calc(var(--spacing-xs));
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 
   .card-icon {
     width: 2.25rem;
     height: auto;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
   }
 
   /* Disable hover transforms on touch devices */
@@ -457,24 +464,6 @@ body {
     bottom: auto;
     top: 100%;
     left: 0;
-    margin-top: var(--spacing-sm);
-  }
-}
-
-/* Additional very-small-screen adjustments */
-@media (max-width: 40rem) {
-  :root {
-    --font-size-xs: 0.7rem;
-    --font-size-sm: 0.825rem;
-    --font-size-md: 0.95rem;
-    --spacing-md: 0.75rem;
-  }
-
-  .container {
-    padding: var(--spacing-sm);
-  }
-
-  .title {
-    font-size: 1.125rem;
+    margin-top: var(--spacing-xs);
   }
 }
