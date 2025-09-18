@@ -2,8 +2,7 @@
 const MAX_DNS_RESULTS = 8;
 const UPDATE_DELAY_MS = 100;
 const REQUEST_DELAY_MS = 200;
-const MAX_ATTEMPTS_DEFAULT = 9;
-const MAX_ATTEMPTS_ALIYUN = 4;
+const MAX_ATTEMPTS_DEFAULT = 5;
 
 // DNS 服务配置数组
 const DNS_SERVICES = [
@@ -112,7 +111,6 @@ const updateDNSList = (dnsData) => {
 
 		rowDiv.appendChild(providerDiv);
 
-
 		const ipDiv = document.createElement("div");
 		ipDiv.setAttribute("data-label", "IP地址");
 		ipDiv.className = "table-cell text-mono";
@@ -143,8 +141,7 @@ const runDNSQueries = async () => {
 	};
 	const promises = DNS_SERVICES.map(async (service) => {
 		let attempts = 0;
-		const maxAttempts = service.name === "AliYun" ? MAX_ATTEMPTS_ALIYUN : MAX_ATTEMPTS_DEFAULT;
-		while (attempts < maxAttempts && dnsData.length < MAX_DNS_RESULTS) {
+		while (attempts < MAX_ATTEMPTS_DEFAULT && dnsData.length < MAX_DNS_RESULTS) {
 			const result = await fetchDNSInfo(service);
 			if (result) {
 				const added = Array.isArray(result)
