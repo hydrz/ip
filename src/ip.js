@@ -64,9 +64,10 @@ const IP_SERVICES = [
 		isDomestic: true,
 		fetch: createSafeFetch("腾讯新闻", async ({ signal } = {}) => {
 			const urlFor = (cb) => `https://r.inews.qq.com/api/ip2city?otype=jsonp&callback=${cb}`;
+			const callbackName = `__jsonp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}__`;
 			const data = await jsonpRequest({
 				urlForCallback: urlFor,
-				namespace: "__tencent_jsonp_callbacks__",
+				namespace: callbackName,
 				signal,
 			});
 			const { ip = "-", country, province, city } = data || {};
