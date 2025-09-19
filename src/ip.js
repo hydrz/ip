@@ -296,8 +296,8 @@ const getServiceSelectors = (service) => ({
 	ipSelector: `#ip-table [data-provider="${service.name}"] [data-label="IP地址"]`,
 	addrSelector: `#ip-table [data-provider="${service.name}"] [data-label="位置"]`,
 	asnSelector: `#ip-table [data-provider="${service.name}"] [data-label="ASN"]`,
-	edgeColoSelector: `#ip-table [data-provider="${service.name}"] [data-label="边缘节点"]`,
-	edgeIpSelector: `#ip-table [data-provider="${service.name}"] [data-label="边缘IP"]`,
+	edgeColoSelector: `#ip-table [data-provider="${service.name}"] [data-label="站点节点"]`,
+	edgeIpSelector: `#ip-table [data-provider="${service.name}"] [data-label="站点IP"]`,
 	tsSelector: `#ip-table [data-provider="${service.name}"] [data-label="响应时间"]`,
 });
 
