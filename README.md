@@ -23,129 +23,103 @@
 
 ![8bit](images/screenshot-8bit.png)
 
-## 技术栈
-
-- **前端**：HTML5、CSS3、JavaScript (ES6+)
-- **部署**：Cloudflare Workers
-- **工具**：Wrangler (Cloudflare CLI)、Biome (代码格式化)、Vite (构建工具)
-- **API**：使用第三方 IP 查询服务和 CDN 测试端点，支持 JSONP 和 CORS
-- **依赖**：Node.js >= 18, pnpm
-
-## 支持的服务商
-
-### IP 地址查询
-
-| 服务商     | 类型 | 描述                  |
-| ---------- | ---- | --------------------- |
-| itdog      | 国内 | 基于 itdog.cn API     |
-| edgeone    | 国内 | 基于 EdgeOne 服务     |
-| tencent    | 国内 | 基于腾讯新闻 API      |
-| speedtest  | 国内 | 基于 speedtest.cn     |
-| cloudflare | 国外 | 基于 Cloudflare trace |
-| ipsb       | 国外 | 基于 IP.SB API        |
-| ipapi      | 国外 | 基于 ip-api.com       |
-| ipinfo     | 国外 | 基于 IPInfo.io        |
-
-### CDN 命中节点测试
-
-| 服务商              | 描述                 |
-| ------------------- | -------------------- |
-| Cloudflare          | 检测 CF-RAY 节点     |
-| Fastly              | 检测 x-served-by 头  |
-| EdgeOne             | 检测 EdgeOne 节点    |
-| jsDelivr            | 检测 Server 头       |
-| AWS CloudFront      | 检测 x-amz-cf-pop    |
-| Bunny Standard      | 检测 Server 头       |
-| Bunny Volume        | 检测 Server 头       |
-| CDN77               | 检测 x-77-pop        |
-| G-Core Labs         | 检测 x-id 头         |
-| Virtuozzo (CDN.net) | 检测 x-edge-location |
-| OVH CDN             | 检测 x-cdn-pop       |
-| CacheFly            | 检测 x-cf1           |
-| Medianova           | 检测 x-edge-location |
-| Zenlayer            | 检测 via 头          |
-| Melbicom            | 检测 x-swifty-node   |
-
-### DNS 出口查询
-
-| 服务商    | 描述                      |
-| --------- | ------------------------- |
-| Fastly    | 基于 fastly-analytics.com |
-| IPAPI     | 基于 ip-api.com EDNS      |
-| Surfshark | 基于 surfsharkdns.com     |
-
-### 网络连通性测试
-
-| 服务商     | 类型 | 描述                 |
-| ---------- | ---- | -------------------- |
-| 百度搜索   | 国内 | 测试 www.baidu.com   |
-| 网易云音乐 | 国内 | 测试 music.163.com   |
-| 抖音       | 国内 | 测试 www.douyin.com  |
-| 腾讯视频   | 国内 | 测试 v.qq.com        |
-| GitHub     | 国外 | 测试 github.com      |
-| YouTube    | 国外 | 测试 www.youtube.com |
-| TikTok     | 国外 | 测试 www.tiktok.com  |
-| Netflix    | 国外 | 测试 www.netflix.com |
-
-## 安装与部署
-
-1. **克隆项目**：
-   ```bash
-   git clone https://github.com/hydrz/ip.git
-   cd ip
-   ```
-
-2. **安装依赖**：
-   - 确保已安装 Node.js 和 pnpm
-     ```bash
-     pnpm install
-     ```
-
-3. **本地开发**：
-   - 启动本地服务器：
-     ```bash
-     pnpm run dev
-     ```
-   - 访问 http://localhost:5173 查看效果。
-
-4. **部署到生产**：
-   - 构建并部署：
-     ```bash
-     npm run deploy
-     ```
-
-### 一键部署
-
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hydrz/ip)
-
 ## 使用方法
 
-- 访问网站后，页面会自动加载 IP 信息和运行各项测试。
-- 使用右侧开关隐藏敏感信息（如 IP 或地理位置），支持随机化以保护隐私。
-- 查看网络连通性、CDN 命中和 DNS 出口结果，所有测试包含重试机制以提高可靠性。
-- 数据获取失败时会显示错误提示，支持手动重试。
+### 方式一: 访问网站
 
-## 项目结构
+[https://ip.hydrz.cn](https://ip.hydrz.cn)
 
+
+### 方式二: curl
+
+用 curl 请求 https://ip.hydrz.cn 并读取响应头里自定义的客户端信息字段。
+
+Example file: [examples/use-curl/main.sh](examples/use-curl/main.sh)
+```bash
+#!/bin/bash
+
+response=$(curl -s -D - https://ip.hydrz.cn -o /dev/null)
+client_ip=$(echo "$response" | grep -i '^x-client-ip:' | awk '{print $2}' | tr -d '\r')
+client_asn=$(echo "$response" | grep -i '^x-client-asn:' | awk '{print $2}' | tr -d '\r')
+client_geo=$(echo "$response" | grep -i '^x-client-geo:' | awk '{print $2}' | tr -d '\r')
+edge_ip=$(echo "$response" | grep -i '^x-edge-ip:' | awk '{print $2}' | tr -d '\r')
+cf_ray=$(echo "$response" | grep -i '^cf-ray:' | awk '{print $2}' | tr -d '\r')
+
+# Split geo fields
+continent=$(echo "$client_geo" | cut -d',' -f1)
+country=$(echo "$client_geo" | cut -d',' -f2)
+region=$(echo "$client_geo" | cut -d',' -f3)
+city=$(echo "$client_geo" | cut -d',' -f4)
+longitude=$(echo "$client_geo" | cut -d',' -f5)
+latitude=$(echo "$client_geo" | cut -d',' -f6)
+postal_code=$(echo "$client_geo" | cut -d',' -f7)
+region_code=$(echo "$client_geo" | cut -d',' -f8)
+
+echo "Client IP: $client_ip"
+echo "Client ASN: $client_asn"
+echo "Client Geo:"
+echo "  Continent: $continent"
+echo "  Country: $country"
+echo "  Region: $region"
+echo "  City: $city"
+echo "  Longitude: $longitude"
+echo "  Latitude: $latitude"
+echo "  Postal Code: $postal_code"
+echo "  Region Code: $region_code"
+echo "CF IP: $edge_ip"
+echo "CF Ray: $cf_ray"
 ```
-ip/
-├── public/              # 静态资源（图片、图标等）
-├── src/
-│   ├── ip.js           # IP 查询逻辑
-│   ├── cdn.js          # CDN 测试逻辑
-│   ├── probe.js        # 网络连通性测试逻辑
-│   └── dns.js          # DNS 出口查询逻辑
-├── index.html          # 主页面
-├── wrangler.jsonc      # Cloudflare Workers 配置
-└── README.md           # 项目说明
+
+### 方式三： 前端获取IP信息
+
+Example file: [examples/use-html/index.html](examples/use-html/index.html)
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IP 查询示例</title>
+  </head>
+  <body>
+    <iframe src="https://ip.hydrz.cn/api" style="display: none"></iframe>
+    <script type="module">
+      // Post a message to the iframe to request IP info.
+      const iframe = document.querySelector("iframe");
+      iframe.onload = () => {
+        iframe.contentWindow.postMessage("ip", "*");
+      };
+
+      // Listen for response from the iframe origin.
+      window.addEventListener("message", (event) => {
+        if (event.origin !== "https://ip.hydrz.cn") return;
+        if (event.data && event.data.error) {
+          document.body.innerText = event.data.error;
+          return;
+        }
+
+        // Destructure returned payload.
+        const { cfColo, cfIp, ip, asn, continent, country, region, region_code, city, lon, lat, postal_code } = event.data;
+        document.body.innerText = `IP 信息:
+IP 地址: ${ip}
+ASN: ${asn}
+数据中心: ${cfColo}
+国家: ${country}
+地区: ${region} (${region_code})
+城市: ${city}
+经度: ${lon}
+纬度: ${lat}
+邮政编码: ${postal_code}
+`;
+      });
+    </script>
+  </body>
+</html>
 ```
 
 ## 开发规范
 
 - **代码风格**：遵循 JavaScript 编码规范，使用 Biome 格式化工具。
-- **注释**：所有代码注释使用英文。
-- **错误处理**：所有异步操作均包含重试机制和异常处理。
-- **性能优化**：使用缓存和延迟加载减少请求，支持并发测试以提升效率。
 
 ## 贡献指南
 

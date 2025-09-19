@@ -30,6 +30,7 @@ export default defineConfig({
 		rollupOptions: {
 			input: {
 				index: resolve(__dirname, "index.html"),
+				api: resolve(__dirname, "api/index.html"),
 			},
 			output: {
 				chunkFileNames: "assets/[name]-[hash].js",
