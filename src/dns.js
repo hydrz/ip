@@ -1,15 +1,60 @@
-// DNS egress query
-const MAX_DNS_RESULTS = 8;
-const UPDATE_DELAY_MS = 100;
-const REQUEST_DELAY_MS = 200;
-const MAX_ATTEMPTS_DEFAULT = 5;
+import { createElement } from "./lib/dom.js";
+import { jsonpRequest } from "./lib/jsonp.js";
+import { randomString } from "./lib/random.js";
+import { sleep } from "./lib/utils.js";
 
-// DNS 服务配置数组
+const MAX_DNS_RESULTS = 8;
+const DNS_UPDATE_DELAY = 100;
+const DNS_REQUEST_DELAY = 200;
+const DNS_MAX_ATTEMPTS = 5;
+const DNS_FETCH_TIMEOUT = 5000;
+
+// DNS services configuration
+// Each service returns: { ip, provider, isp, location }
 const DNS_SERVICES = [
 	{
+		name: "Aliyun",
+		fetch: async ({ signal } = {}) => {
+			const timestamp = Date.now();
+			const random = randomString(11);
+			const callbackNamespace = "__aliyun_jsonp_callbacks__";
+			const urlFor = (cb) =>
+				`https://${timestamp}-${random}.dns-detect.alicdn.com/api/detect/DescribeDNSLookup?cb=${cb}`;
+
+			const data = await jsonpRequest({
+				urlForCallback: urlFor,
+				namespace: callbackNamespace,
+				timeout: DNS_FETCH_TIMEOUT,
+				signal,
+			});
+
+			const ip = data?.content?.ldns;
+			if (ip) {
+				return {
+					ip,
+					provider: "AliYun",
+					isp: "",
+					location: "",
+				};
+			}
+			return null;
+		},
+	},
+	{
 		name: "Fastly",
-		url: (timestamp, random) => `https://${timestamp}-${random}.u.fastly-analytics.com/debug_resolver`,
-		parse: (data) => {
+		fetch: async ({ signal } = {}) => {
+			const timestamp = Date.now();
+			const random = randomString(11);
+			const url = `https://${timestamp}-${random}.u.fastly-analytics.com/debug_resolver`;
+
+			const response = await fetch(url, {
+				signal,
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+			const data = await response.json();
 			const resolver = data.dns_resolver_info;
 			if (resolver?.ip) {
 				return {
@@ -24,8 +69,19 @@ const DNS_SERVICES = [
 	},
 	{
 		name: "IPAPI",
-		url: (timestamp, random) => `https://${timestamp}-${random}--hydrz.edns.ip-api.com/json`,
-		parse: (data) => {
+		fetch: async ({ signal } = {}) => {
+			const timestamp = Date.now();
+			const random = randomString(32 - 1 - timestamp.toString().length);
+			const url = `https://${timestamp}-${random}.edns.ip-api.com/json`;
+
+			const response = await fetch(url, {
+				signal,
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+			const data = await response.json();
 			const dnsInfo = data.dns;
 			if (dnsInfo?.ip) {
 				return {
@@ -40,15 +96,25 @@ const DNS_SERVICES = [
 	},
 	{
 		name: "Surfshark",
-		url: (random) => `https://${random}.ipv4.surfsharkdns.com/`,
-		parse: (data) => {
+		fetch: async ({ signal } = {}) => {
+			const random = randomString(11);
+			const url = `https://${random}.ipv4.surfsharkdns.com/`;
+
+			const response = await fetch(url, {
+				signal,
+				referrerPolicy: "no-referrer",
+				credentials: "omit",
+			});
+			if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+			const data = await response.json();
 			const results = [];
 			for (const [ip, info] of Object.entries(data)) {
 				results.push({
 					ip,
 					provider: "Shark",
 					isp: info.ISP || "",
-					location: `${info.Country} ${info.City}`.trim(),
+					location: `${info.Country || ""} ${info.City || ""}`.trim(),
 				});
 			}
 			return results;
@@ -56,107 +122,92 @@ const DNS_SERVICES = [
 	},
 ];
 
-// Generate random ID
-const generateRandomId = (length = 15) =>
-	Math.random()
-		.toString(36)
-		.slice(2, 2 + length);
+// Create DNS row element
+const createDNSRow = ({ ip, provider, isp, location }) => {
+	const rowDiv = createElement("div", {}, "", "table-row dns-row");
 
-// Fetch DNS info with retries
-const fetchDNSInfo = async (service, retries = 3) => {
-	for (let attempt = 1; attempt <= retries; attempt++) {
-		try {
-			const controller = new AbortController();
-			const timeoutId = setTimeout(() => controller.abort(), 5000);
-			const timestamp = Date.now();
-			const random = generateRandomId();
-			const url = service.name === "Surfshark" ? service.url(random) : service.url(timestamp, random);
-			const response = await fetch(url, {
-				signal: controller.signal,
-				referrerPolicy: "no-referrer",
-				credentials: "omit",
-			});
-			clearTimeout(timeoutId);
-			if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-			const data = await response.json();
-			const result = service.parse(data);
-			if (!result) console.warn(`${service.name} returned unparseable data`);
-			return result;
-		} catch (error) {
-			console.error(`Failed to fetch DNS from ${service.name}:`, error.message);
-			if (attempt === retries) return null;
-			await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
-		}
-	}
+	// Provider cell with ISP
+	const providerDiv = createElement("div", { "data-label": "服务商" }, provider, "table-cell text-title");
+	const ispSpan = createElement("span", {}, ` ${isp?.trim() || MESSAGES.UNKNOWN_ISP}`, "text-subtitle");
+	providerDiv.appendChild(ispSpan);
+	providerDiv.title = `${provider} - ${isp?.trim() || MESSAGES.UNKNOWN_ISP}`;
+
+	// IP cell
+	const ipDiv = createElement("div", { "data-label": "IP地址" }, ip, "table-cell text-mono");
+	ipDiv.title = ip;
+
+	// Location cell
+	const locationDiv = createElement(
+		"div",
+		{ "data-label": "位置" },
+		location || MESSAGES.UNKNOWN_LOCATION,
+		"table-cell text-meta",
+	);
+	locationDiv.title = location || MESSAGES.UNKNOWN_LOCATION;
+
+	rowDiv.append(providerDiv, ipDiv, locationDiv);
+	return rowDiv;
 };
 
-// Update DNS list with fragment
+// Update DNS list display
 const updateDNSList = (dnsData) => {
 	const dnsDataElement = document.getElementById("dns-data");
 	if (!dnsDataElement) return;
+
 	const fragment = document.createDocumentFragment();
-	dnsData.forEach(({ ip, provider, isp, location }) => {
-		const rowDiv = document.createElement("div");
-		rowDiv.className = "table-row dns-row";
-
-		const providerDiv = document.createElement("div");
-		providerDiv.setAttribute("data-label", "服务商");
-		providerDiv.className = "table-cell text-title";
-		providerDiv.textContent = provider;
-		const ispSpan = document.createElement("span");
-		ispSpan.className = "text-subtitle";
-		ispSpan.textContent = ` ${isp?.trim() || "Unknown ISP"}`;
-		providerDiv.appendChild(ispSpan);
-		providerDiv.title = `${provider} - ${isp?.trim() || "Unknown ISP"}`;
-
-		rowDiv.appendChild(providerDiv);
-
-		const ipDiv = document.createElement("div");
-		ipDiv.setAttribute("data-label", "IP地址");
-		ipDiv.className = "table-cell text-mono";
-		ipDiv.textContent = ip;
-		ipDiv.title = ip;
-		rowDiv.appendChild(ipDiv);
-
-		const locationDiv = document.createElement("div");
-		locationDiv.setAttribute("data-label", "位置");
-		locationDiv.className = "table-cell text-meta";
-		locationDiv.textContent = location || "Unknown Location";
-		locationDiv.title = location || "Unknown Location";
-		rowDiv.appendChild(locationDiv);
-
-		fragment.appendChild(rowDiv);
+	dnsData.forEach((dnsItem) => {
+		fragment.appendChild(createDNSRow(dnsItem));
 	});
+
 	dnsDataElement.innerHTML = "";
 	dnsDataElement.appendChild(fragment);
 };
 
-// Run DNS queries
+// Run DNS queries with retry logic
 const runDNSQueries = async () => {
 	const dnsData = [];
 	let updateTimer = null;
-	const updateDisplay = () => {
+
+	const scheduleUpdate = () => {
 		if (updateTimer) clearTimeout(updateTimer);
-		updateTimer = setTimeout(() => updateDNSList([...dnsData]), UPDATE_DELAY_MS);
+		updateTimer = setTimeout(() => updateDNSList([...dnsData]), DNS_UPDATE_DELAY);
 	};
+
 	const promises = DNS_SERVICES.map(async (service) => {
 		let attempts = 0;
-		while (attempts < MAX_ATTEMPTS_DEFAULT && dnsData.length < MAX_DNS_RESULTS) {
-			const result = await fetchDNSInfo(service);
-			if (result) {
-				const added = Array.isArray(result)
-					? result.filter((item) => !dnsData.some((d) => d.ip === item.ip))
-					: [result].filter((item) => !dnsData.some((d) => d.ip === item.ip));
-				dnsData.push(...added);
-				if (added.length > 0) updateDisplay();
+		while (attempts < DNS_MAX_ATTEMPTS && dnsData.length < MAX_DNS_RESULTS) {
+			try {
+				const controller = new AbortController();
+				const timeoutId = setTimeout(() => controller.abort(), DNS_FETCH_TIMEOUT);
+				const result = await service.fetch({ signal: controller.signal });
+				clearTimeout(timeoutId);
+
+				if (result) {
+					const resultArray = Array.isArray(result) ? result : [result];
+					const newItems = resultArray.filter((item) => !dnsData.some((d) => d.ip === item.ip));
+
+					if (newItems.length > 0) {
+						dnsData.push(...newItems);
+						scheduleUpdate();
+					}
+				} else {
+					console.warn(`${service.name} returned unparseable data`);
+				}
+			} catch (error) {
+				console.error(`Failed to fetch DNS from ${service.name}:`, error?.message || error);
 			}
-			attempts++;
-			await new Promise((resolve) => setTimeout(resolve, REQUEST_DELAY_MS));
+
+			attempts += 1;
+			if (attempts < DNS_MAX_ATTEMPTS) {
+				await sleep(DNS_REQUEST_DELAY);
+			}
 		}
 	});
+
 	await Promise.all(promises);
 	if (updateTimer) clearTimeout(updateTimer);
 	updateDNSList(dnsData);
 };
 
+// Initialize DNS queries on page load
 window.addEventListener("DOMContentLoaded", runDNSQueries);

@@ -9,5 +9,5 @@
 		"enabled": true
 	},
 	"workers_dev": false,
-	"routes": [{ "pattern": "ip.hydrz.cn/*", "zone_name": "hydrz.cn" }]
+	"routes": [{ "pattern": "ip.hydrz.cn", "custom_domain": true }]
 }

@@ -1,4 +1,10 @@
-// Network connectivity check
+import { MESSAGES } from "./lib/ui.js";
+import { fetchWithTimeout, runWithRetries, sleep } from "./lib/utils.js";
+
+const PROBE_TEST_TIMEOUT = 3000;
+const PROBE_TEST_DELAY = 100;
+
+// Network connectivity test services
 const PROBE_SERVICES = [
 	{
 		name: "百度搜索",
@@ -43,46 +49,48 @@ const PROBE_SERVICES = [
 ];
 
 // Test connection latency with retries
-const testLatency = async (domain, retries = 3) => {
-	for (let attempt = 1; attempt <= retries; attempt++) {
-		try {
-			const startTime = performance.now();
-			await fetch(`https://${domain}/favicon.ico`, {
-				method: "HEAD",
-				mode: "no-cors",
-				cache: "no-cache",
-			});
-			const latency = performance.now() - startTime;
-			return Math.round(latency);
-		} catch (error) {
-			if (attempt === retries) {
-				console.error(`testLatency for ${domain} failed:`, error.message);
-				return null;
-			}
-			await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
-		}
-	}
+const testLatency = async (domain, retries = 3, timeout = PROBE_TEST_TIMEOUT) => {
+	return runWithRetries(
+		async () => {
+			const start = performance.now();
+			await fetchWithTimeout(
+				`https://${domain}/favicon.ico`,
+				{
+					method: "HEAD",
+					mode: "no-cors",
+					cache: "no-cache",
+					referrerPolicy: "no-referrer",
+					credentials: "omit",
+				},
+				timeout,
+			);
+			return Math.round(performance.now() - start);
+		},
+		{ retries, timeoutPerAttempt: timeout },
+	).catch(() => null);
 };
 
-// Run multiple tests and calculate average
+// Run multiple latency tests and calculate average
 const runMultipleTests = async (domain, count = 10) => {
-	const promises = Array.from({ length: count }, () => testLatency(domain));
-	const results = (await Promise.all(promises)).filter((latency) => latency !== null);
-	if (results.length === 0) {
-		return null;
+	const results = [];
+	for (let i = 0; i < count; i += 1) {
+		const result = await testLatency(domain, 2, 2500);
+		if (result !== null) results.push(result);
+		await sleep(PROBE_TEST_DELAY);
 	}
-	const average = results.reduce((sum, latency) => sum + latency, 0) / results.length;
-	return Math.round(average);
+
+	if (results.length === 0) return null;
+	return Math.round(results.reduce((sum, value) => sum + value, 0) / results.length);
 };
 
-// Update display result with cached element
+// Update probe result display
 const updateProbeResult = (elementId, latency) => {
 	const element = document.getElementById(elementId);
 	if (!element) return;
 
 	if (latency === null) {
 		element.className = "text-content text-error";
-		element.textContent = "超时";
+		element.textContent = MESSAGES.TIMEOUT;
 		return;
 	}
 
@@ -95,9 +103,9 @@ const updateProbeResult = (elementId, latency) => {
 				: "text-content text-error";
 };
 
-// Run all connectivity tests
+// Run connectivity tests for all services
 const runConnectivityTests = async () => {
-	for (const service of PROBE_SERVICES) {
+	const testPromises = PROBE_SERVICES.map(async (service) => {
 		try {
 			const latency = await runMultipleTests(service.domain);
 			updateProbeResult(service.elementId, latency);
@@ -105,8 +113,10 @@ const runConnectivityTests = async () => {
 			console.warn(`Connectivity test failed for ${service.name}:`, error.message);
 			updateProbeResult(service.elementId, null);
 		}
-	}
+	});
+
+	await Promise.all(testPromises);
 };
 
-// Run tests on page load
+// Initialize connectivity tests on page load
 window.addEventListener("DOMContentLoaded", runConnectivityTests);
