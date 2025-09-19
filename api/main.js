@@ -54,22 +54,22 @@ window.addEventListener("message", async (event) => {
 window.addEventListener("DOMContentLoaded", async () => {
 	try {
 		const data = await fetchData();
-		document.body.innerHTML = `
-        <div><strong>ip:</strong> ${data.ip}</div>
-        <div><strong>asn:</strong> ${data.asn}</div>
-        <div><strong>continent:</strong> ${data.continent}</div>
-        <div><strong>country:</strong> ${data.country}</div>
-        <div><strong>region:</strong> ${data.region}</div>
-        <div><strong>region_code:</strong> ${data.region_code}</div>
-        <div><strong>city:</strong> ${data.city}</div>
-        <div><strong>lon:</strong> ${data.lon}</div>
-        <div><strong>lat:</strong> ${data.lat}</div>
-        <div><strong>postal_code:</strong> ${data.postal_code}</div>
-        <div><strong>edgeIP:</strong> ${data.edgeIP}</div>
-        <div><strong>edgeColo:</strong> ${data.edgeColo}</div>
-        <div><strong>ts:</strong> ${data.ts}ms</div>
-    `;
+		document.body.innerText = `
+ip=${data.ip}
+asn=${data.asn}
+continent=${data.continent}
+country=${data.country}
+region=${data.region}
+region_code=${data.region_code}
+city=${data.city}
+lon=${data.lon}
+lat=${data.lat}
+postal_code=${data.postal_code}
+edgeIP=${data.edgeIP}
+edgeColo=${data.edgeColo}
+ts=${data.ts}ms
+    `.trim();
 	} catch (error) {
-		document.body.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+		document.body.innerText = `Error: ${error.message}`;
 	}
 });
