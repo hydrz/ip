@@ -1,3 +1,8 @@
+import { MESSAGES } from "./lib/ui.js";
+
+const CDN_TEST_TIMEOUT = 3000;
+const CDN_MAX_ATTEMPTS = 3;
+
 const CDN_TESTS = [
 	{
 		provider: "cloudflare",
@@ -248,32 +253,41 @@ const CDN_TESTS = [
 	},
 ];
 
-// New helper: only run tests for providers actually rendered in index.html (cards).
+// Filter CDN tests for providers that exist in DOM
 const getRenderedCDNTests = () =>
 	CDN_TESTS.filter((test) => document.querySelector(`#cdn-test [data-provider="${test.provider}"]`));
 
-// Run CDN tests with retries (only for rendered providers)
-const runCDNTests = async () => {
-	const testsToRun = getRenderedCDNTests();
-	const promises = testsToRun.map(async (test) => {
-		let result = "获取失败";
-		for (let attempt = 1; attempt <= 3; attempt++) {
-			try {
-				const controller = new AbortController();
-				const timeoutId = setTimeout(() => controller.abort(), 3000);
-				result = await test.fetch();
-				clearTimeout(timeoutId);
-				break;
-			} catch (error) {
-				console.error(`Failed to test ${test.name} on attempt ${attempt}:`, error.message);
-				if (attempt === 3) result = "网络错误，请重试";
+// Execute single CDN test with retries
+const runSingleCDNTest = async (test) => {
+	let result = MESSAGES.FETCH_FAILED;
+
+	for (let attempt = 1; attempt <= CDN_MAX_ATTEMPTS; attempt++) {
+		try {
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), CDN_TEST_TIMEOUT);
+			result = await test.fetch();
+			clearTimeout(timeoutId);
+			break;
+		} catch (error) {
+			console.error(`Failed to test ${test.provider} on attempt ${attempt}:`, error.message);
+			if (attempt === CDN_MAX_ATTEMPTS) {
+				result = MESSAGES.ERROR;
+			} else {
 				await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
 			}
 		}
-		const resultEl = document.querySelector(`#cdn-test [data-provider="${test.provider}"] [data-label="节点"]`);
-		if (resultEl) resultEl.textContent = result;
-	});
-	await Promise.all(promises);
+	}
+
+	const resultEl = document.querySelector(`#cdn-test [data-provider="${test.provider}"] [data-label="节点"]`);
+	if (resultEl) resultEl.textContent = result;
 };
 
+// Run CDN tests for all rendered providers
+const runCDNTests = async () => {
+	const testsToRun = getRenderedCDNTests();
+	const testPromises = testsToRun.map(runSingleCDNTest);
+	await Promise.all(testPromises);
+};
+
+// Initialize CDN tests on page load
 window.addEventListener("DOMContentLoaded", runCDNTests);
