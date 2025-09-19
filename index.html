@@ -433,5 +433,18 @@
     <script type="module" src="./src/cdn.js"></script>
     <script type="module" src="./src/probe.js"></script>
     <script type="module" src="./src/dns.js"></script>
+
+    <!-- Cloudflare Web Analytics -->
+    <script>
+      window.__cfBeacon = {
+        send: { to: "https://cloudflareinsights.com/cdn-cgi/rum" },
+        version: "2025.9.1",
+        r: 1,
+        token: "63d4b1c033854c4f85f8079e8e9f0e9f",
+        serverTiming: { name: { cfExtPri: true, cfEdge: true, cfOrigin: true, cfL4: true, cfSpeedBrain: true, cfCacheStatus: true } },
+      };
+    </script>
+    <script type="module" src="./src/beacon.js"></script>
+    <!-- End Cloudflare Web Analytics -->
   </body>
 </html>
