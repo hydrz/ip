@@ -9,16 +9,14 @@ window.addEventListener("message", async (event) => {
 			const headers = response.headers;
 			const ip = headers.get("x-client-ip") || "Unknown";
 			const asn = headers.get("x-client-asn") || "Unknown";
-			const cfColo = headers.get("cf-ray") ? headers.get("cf-ray").split("-")[1] : "Unknown";
-			const cfIp = headers.get("x-edge-ip") || "Unknown";
+			const edgeIP = headers.get("x-edge-ip") || "Unknown";
+			const edgeColo = headers.get("x-edge-colo") || "Unknown";
 
 			const geo = headers.get("x-client-geo") || "Unknown";
 			const [continent, country, region, city, lon, lat, postal_code, region_code] = geo.split(",");
 
 			event.source.postMessage(
 				{
-					cfColo,
-					cfIp,
 					ip,
 					asn,
 					continent,
@@ -29,6 +27,8 @@ window.addEventListener("message", async (event) => {
 					lon,
 					lat,
 					postal_code,
+					edgeIP,
+					edgeColo,
 				},
 				targetOrigin,
 			);

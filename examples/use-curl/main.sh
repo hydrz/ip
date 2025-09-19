@@ -1,11 +1,11 @@
 #!/bin/bash
 
-response=$(curl -s -D - https://ip.hydrz.cn -o /dev/null)
+response=$(curl -sI https://ip.hydrz.cn)
 client_ip=$(echo "$response" | grep -i '^x-client-ip:' | awk '{print $2}' | tr -d '\r')
 client_asn=$(echo "$response" | grep -i '^x-client-asn:' | awk '{print $2}' | tr -d '\r')
 client_geo=$(echo "$response" | grep -i '^x-client-geo:' | awk '{print $2}' | tr -d '\r')
 edge_ip=$(echo "$response" | grep -i '^x-edge-ip:' | awk '{print $2}' | tr -d '\r')
-cf_ray=$(echo "$response" | grep -i '^cf-ray:' | awk '{print $2}' | tr -d '\r')
+edge_colo=$(echo "$response" | grep -i '^x-edge-colo:' | awk '{print $2}' | tr -d '\r')
 
 continent=$(echo "$client_geo" | cut -d',' -f1)
 country=$(echo "$client_geo" | cut -d',' -f2)
@@ -27,5 +27,5 @@ echo "  Longitude: $longitude"
 echo "  Latitude: $latitude"
 echo "  Postal Code: $postal_code"
 echo "  Region Code: $region_code"
-echo "CF IP: $edge_ip"
-echo "CF Ray: $cf_ray"
+echo "Edge IP: $edge_ip"
+echo "Edge Colo: $edge_colo"

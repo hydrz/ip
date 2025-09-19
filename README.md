@@ -23,98 +23,40 @@
 
 ![8bit](images/screenshot-8bit.png)
 
-## 使用方法
+## 使用方式
 
 ### 方式一: 访问网站
 
-[https://ip.hydrz.cn](https://ip.hydrz.cn)
+- 在线访问: [https://ip.hydrz.cn](https://ip.hydrz.cn)
 
 
-### 方式二: curl
+### 方式二：命令行（curl）
 
-用 curl 请求 https://ip.hydrz.cn 并读取响应头里自定义的客户端信息字段。
+- 使用 curl 读取响应头自定义字段（示例见 [`examples/use-curl/main.sh`](examples/use-curl/main.sh)）：
 
-Example file: [examples/use-curl/main.sh](examples/use-curl/main.sh)
 ```bash
-#!/bin/bash
-
-response=$(curl -s -D - https://ip.hydrz.cn -o /dev/null)
-client_ip=$(echo "$response" | grep -i '^x-client-ip:' | awk '{print $2}' | tr -d '\r')
-client_asn=$(echo "$response" | grep -i '^x-client-asn:' | awk '{print $2}' | tr -d '\r')
-client_geo=$(echo "$response" | grep -i '^x-client-geo:' | awk '{print $2}' | tr -d '\r')
-edge_ip=$(echo "$response" | grep -i '^x-edge-ip:' | awk '{print $2}' | tr -d '\r')
-cf_ray=$(echo "$response" | grep -i '^cf-ray:' | awk '{print $2}' | tr -d '\r')
-
-# Split geo fields
-continent=$(echo "$client_geo" | cut -d',' -f1)
-country=$(echo "$client_geo" | cut -d',' -f2)
-region=$(echo "$client_geo" | cut -d',' -f3)
-city=$(echo "$client_geo" | cut -d',' -f4)
-longitude=$(echo "$client_geo" | cut -d',' -f5)
-latitude=$(echo "$client_geo" | cut -d',' -f6)
-postal_code=$(echo "$client_geo" | cut -d',' -f7)
-region_code=$(echo "$client_geo" | cut -d',' -f8)
-
-echo "Client IP: $client_ip"
-echo "Client ASN: $client_asn"
-echo "Client Geo:"
-echo "  Continent: $continent"
-echo "  Country: $country"
-echo "  Region: $region"
-echo "  City: $city"
-echo "  Longitude: $longitude"
-echo "  Latitude: $latitude"
-echo "  Postal Code: $postal_code"
-echo "  Region Code: $region_code"
-echo "CF IP: $edge_ip"
-echo "CF Ray: $cf_ray"
+curl -sI https://ip.hydrz.cn
 ```
 
 ### 方式三： 前端获取IP信息
 
-Example file: [examples/use-html/index.html](examples/use-html/index.html)
+- 在页面内嵌入 iframe 并通过 postMessage 获取数据（示例见 [`examples/use-html/index.html`](examples/use-html/index.html)）：
+
 ```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IP 查询示例</title>
-  </head>
-  <body>
-    <iframe src="https://ip.hydrz.cn/api" style="display: none"></iframe>
-    <script type="module">
-      // Post a message to the iframe to request IP info.
-      const iframe = document.querySelector("iframe");
-      iframe.onload = () => {
-        iframe.contentWindow.postMessage("ip", "*");
-      };
+<iframe src="https://ip.hydrz.cn/api" style="display:none"></iframe>
+<script>
+  const iframe = document.querySelector('iframe');
+  iframe.onload = () => iframe.contentWindow.postMessage('ip', '*');
 
-      // Listen for response from the iframe origin.
-      window.addEventListener("message", (event) => {
-        if (event.origin !== "https://ip.hydrz.cn") return;
-        if (event.data && event.data.error) {
-          document.body.innerText = event.data.error;
-          return;
-        }
-
-        // Destructure returned payload.
-        const { cfColo, cfIp, ip, asn, continent, country, region, region_code, city, lon, lat, postal_code } = event.data;
-        document.body.innerText = `IP 信息:
-IP 地址: ${ip}
-ASN: ${asn}
-数据中心: ${cfColo}
-国家: ${country}
-地区: ${region} (${region_code})
-城市: ${city}
-经度: ${lon}
-纬度: ${lat}
-邮政编码: ${postal_code}
-`;
-      });
-    </script>
-  </body>
-</html>
+  window.addEventListener('message', (event) => {
+    if (event.origin !== 'https://ip.hydrz.cn') return;
+    if (event.data && event.data.error) {
+      console.error(event.data.error);
+      return;
+    }
+    console.log('IP data:', event.data);
+  });
+</script>
 ```
 
 ## 开发规范

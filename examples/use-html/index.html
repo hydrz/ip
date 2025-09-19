@@ -20,17 +20,18 @@
           return;
         }
 
-        const { cfColo, cfIp, ip, asn, continent, country, region, region_code, city, lon, lat, postal_code } = event.data;
+        const { ip, asn, continent, country, region, region_code, city, lon, lat, postal_code, edgeIP, edgeColo } = event.data;
         document.body.innerText = `IP 信息:
 IP 地址: ${ip}
 ASN: ${asn}
-数据中心: ${cfColo}
 国家: ${country}
 地区: ${region} (${region_code})
 城市: ${city}
 经度: ${lon}
 纬度: ${lat}
 邮政编码: ${postal_code}
+边缘节点 IP: ${edgeIP}
+边缘节点 位置: ${edgeColo}
 `;
       });
     </script>
