@@ -13,16 +13,6 @@
 
 *图：项目主界面，展示 IP 查询、连通性测试和 CDN 结果。*
 
-## 多主题
-
-### 吉卜力
-
-![吉卜力](images/screenshot-ghibli.png)
-
-### 8bit
-
-![8bit](images/screenshot-8bit.png)
-
 ## 使用方式
 
 ### 方式一: 访问网站
@@ -58,6 +48,16 @@ curl -sI https://ip.hydrz.cn
   });
 </script>
 ```
+
+## 多主题
+
+### 吉卜力
+
+![吉卜力](images/screenshot-ghibli.png)
+
+### 8bit
+
+![8bit](images/screenshot-8bit.png)
 
 ## 开发规范
 
