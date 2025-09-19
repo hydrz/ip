@@ -13,7 +13,7 @@
 	--color-info: #6fbad9;
 	--color-focus: #d9a44a;
 
-	--font-family: Georgia, "Palatino Linotype", "Times New Roman", "Noto Serif", serif;
+	--font-family: Georgia, "Palatino Linotype", "Times New Roman", "Noto Serif", "SimSun", "宋体", serif;
 }
 
 /* Dark mode variable overrides */

@@ -94,6 +94,31 @@
           align-items: flex-start;
         }
       }
+
+      [data-provider="ip.hydrz.cn"] {
+        border: 1px solid var(--color-focus);
+        margin: var(--spacing-sm) var(--spacing-sm);
+        box-shadow: 0 4px 12px var(--color-shadow);
+        border-radius: var(--border-radius);
+        position: relative;
+      }
+
+      [data-provider="ip.hydrz.cn"]::before {
+        content: "🌐";
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        font-size: 1rem;
+        color: var(--color-primary);
+        background: var(--color-surface);
+        border-radius: 50%;
+        padding: 4px;
+        box-shadow: 0 4px 12px var(--color-shadow);
+      }
+
+      [data-provider="ip.hydrz.cn"]:hover {
+        transform: translateY(-2px) scale(1.02);
+      }
     </style>
   </head>
   <body>
@@ -104,17 +129,36 @@
           <h2 class="sr-only">IP地址信息查询</h2>
           <div>
             <h1 class="title">IP 地址查询</h1>
+
             <div class="card" tabindex="0">
               <div id="ip-table" class="table">
                 <div class="sr-only">IP 地址查询结果</div>
                 <div class="table-body">
+                  <div data-provider="ip.hydrz.cn">
+                    <div class="table-row">
+                      <div class="table-cell"><span class="text-title">IP: </span><span class="text-meta" data-label="IP地址">-</span></div>
+                      <div class="table-cell"><span class="text-title">位置: </span><span class="text-meta" data-label="位置">-</span></div>
+                      <div class="table-cell"><span class="text-title">ASN: </span><span class="text-meta" data-label="ASN">-</span></div>
+                    </div>
+                    <div class="table-row">
+                      <div class="table-cell">
+                        <span class="text-title">边缘节点: </span><span class="text-meta" data-label="边缘节点">-</span>
+                      </div>
+                      <div class="table-cell">
+                        <span class="text-title">边缘IP: </span><span class="text-meta" data-label="边缘IP">-</span>
+                      </div>
+                      <div class="table-cell">
+                        <span class="text-title">响应时间: </span><span class="text-meta" data-label="响应时间">-</span> ms
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- itdog.cn -->
                   <div class="table-row ip-row" data-provider="itdog">
                     <div class="table-cell text-title">国内 <span class="text-subtitle">itdog.cn</span></div>
                     <div class="table-cell text-content" data-label="IP地址">加载中...</div>
                     <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
-
                   <!-- edgeone -->
                   <div class="table-row ip-row" data-provider="edgeone">
                     <div class="table-cell text-title">国内 <span class="text-subtitle">edgeone</span></div>
@@ -129,21 +173,9 @@
                     <div class="table-cell text-content" data-label="IP地址">加载中...</div>
                     <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
-                  <!-- speedtest.cn -->
-                  <div class="table-row ip-row" data-provider="speedtest">
-                    <div class="table-cell text-title">国内 <span class="text-subtitle">speedtest.cn</span></div>
-                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div class="table-cell text-meta" data-label="位置">-</div>
-                  </div>
                   <!-- Cloudflare -->
                   <div class="table-row ip-row" data-provider="cloudflare">
                     <div class="table-cell text-title">国外 <span class="text-subtitle">Cloudflare</span></div>
-                    <div class="table-cell text-content" data-label="IP地址">加载中...</div>
-                    <div class="table-cell text-meta" data-label="位置">-</div>
-                  </div>
-                  <!-- IP.SB -->
-                  <div class="table-row ip-row" data-provider="ipsb">
-                    <div class="table-cell text-title">国外 <span class="text-subtitle">IP.SB</span></div>
                     <div class="table-cell text-content" data-label="IP地址">加载中...</div>
                     <div class="table-cell text-meta" data-label="位置">-</div>
                   </div>
