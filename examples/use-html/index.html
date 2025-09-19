@@ -20,7 +20,7 @@
           return;
         }
 
-        const { ip, asn, continent, country, region, region_code, city, lon, lat, postal_code, edgeIP, edgeColo } = event.data;
+        const { ip, asn, continent, country, region, region_code, city, lon, lat, postal_code, edgeIP, edgeColo, ts } = event.data;
         document.body.innerText = `IP 信息:
 IP 地址: ${ip}
 ASN: ${asn}
@@ -32,6 +32,7 @@ ASN: ${asn}
 邮政编码: ${postal_code}
 边缘节点 IP: ${edgeIP}
 边缘节点 位置: ${edgeColo}
+响应时间: ${ts}ms
 `;
       });
     </script>
